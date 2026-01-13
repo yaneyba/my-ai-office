@@ -3,59 +3,92 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <title>My AI Office</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* Dark Theme (default) */
     :root {
-      --bg: #0a0a0f;
-      --floor: #12121a;
-      --card: #1a1a24;
-      --card-hover: #22222e;
-      --border: #2a2a3a;
-      --text: #e0e0e0;
-      --text-dim: #888;
-      --accent: #3b82f6;
-      --green: #22c55e;
-      --yellow: #eab308;
-      --red: #ef4444;
-      --purple: #a855f7;
-      --cyan: #06b6d4;
-      --glow: rgba(59, 130, 246, 0.3);
+      --radius: 0.75rem;
+      /* Light Theme (default) */
+      --background: oklch(0.985 0 0);
+      --foreground: oklch(0.235 0.015 65);
+      --card: oklch(1 0 0);
+      --card-foreground: oklch(0.235 0.015 65);
+      --muted: oklch(0.967 0.001 286.375);
+      --muted-foreground: oklch(0.552 0.016 285.938);
+      --primary: oklch(0.55 0.24 260);
+      --primary-foreground: oklch(0.985 0 0);
+      --secondary: oklch(0.96 0.001 286.375);
+      --secondary-foreground: oklch(0.4 0.015 65);
+      --accent: oklch(0.967 0.001 286.375);
+      --accent-foreground: oklch(0.141 0.005 285.823);
+      --border: oklch(0.92 0.004 286.32);
+      --input: oklch(0.92 0.004 286.32);
+      --ring: oklch(0.55 0.24 260);
+      --destructive: oklch(0.577 0.245 27.325);
+
+      /* Agent colors */
+      --blue: oklch(0.55 0.24 260);
+      --green: oklch(0.65 0.2 145);
+      --yellow: oklch(0.75 0.18 85);
+      --purple: oklch(0.55 0.25 300);
+      --teal: oklch(0.65 0.15 195);
+      --red: oklch(0.55 0.22 25);
     }
 
-    /* Light Theme */
-    [data-theme="light"] {
-      --bg: #e8eaed;
-      --floor: #f5f5f7;
-      --card: #ffffff;
-      --card-hover: #f0f0f5;
-      --border: #d0d0d8;
-      --text: #1a1a1a;
-      --text-dim: #666;
-      --accent: #2563eb;
-      --green: #16a34a;
-      --yellow: #ca8a04;
-      --red: #dc2626;
-      --purple: #9333ea;
-      --cyan: #0891b2;
-      --glow: rgba(37, 99, 235, 0.2);
+    .dark {
+      --background: oklch(0.145 0.005 285.823);
+      --foreground: oklch(0.92 0.005 65);
+      --card: oklch(0.18 0.006 285.885);
+      --card-foreground: oklch(0.92 0.005 65);
+      --muted: oklch(0.22 0.006 286.033);
+      --muted-foreground: oklch(0.705 0.015 286.067);
+      --primary: oklch(0.65 0.24 260);
+      --primary-foreground: oklch(0.15 0 0);
+      --secondary: oklch(0.24 0.006 286.033);
+      --secondary-foreground: oklch(0.85 0.005 65);
+      --accent: oklch(0.274 0.006 286.033);
+      --accent-foreground: oklch(0.92 0.005 65);
+      --border: oklch(1 0 0 / 10%);
+      --input: oklch(1 0 0 / 15%);
+      --ring: oklch(0.65 0.24 260);
+      --destructive: oklch(0.704 0.191 22.216);
+
+      --blue: oklch(0.65 0.2 260);
+      --green: oklch(0.7 0.18 145);
+      --yellow: oklch(0.8 0.15 85);
+      --purple: oklch(0.65 0.22 300);
+      --teal: oklch(0.7 0.13 195);
+      --red: oklch(0.65 0.2 25);
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--background);
+      color: var(--foreground);
       min-height: 100vh;
-      overflow: hidden;
+      overflow-x: hidden;
+    }
+
+    /* Gradient background */
+    .gradient-bg {
+      background:
+        radial-gradient(ellipse at 20% 0%, oklch(0.55 0.15 260 / 15%) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, oklch(0.65 0.12 300 / 10%) 0%, transparent 50%),
+        var(--background);
     }
 
     /* Top Bar */
     .topbar {
-      background: var(--card);
+      background: var(--card) / 80%;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 0.75rem 1.5rem;
+      padding: 0 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -64,7 +97,7 @@
       left: 0;
       right: 0;
       z-index: 100;
-      height: 56px;
+      height: 64px;
     }
 
     .logo {
@@ -72,42 +105,74 @@
       font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
-    .logo-icon { font-size: 1.5rem; }
-    .logo span { color: var(--accent); }
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--purple));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .logo-text span:first-child {
+      font-weight: 700;
+      color: var(--foreground);
+    }
+
+    .logo-text span:last-child {
+      font-size: 0.7rem;
+      color: var(--muted-foreground);
+      font-weight: 500;
+    }
 
     .topbar-center {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.25rem;
+      background: var(--muted);
+      padding: 0.25rem;
+      border-radius: calc(var(--radius) + 2px);
     }
 
-    .view-btn {
+    .nav-btn {
       background: transparent;
-      border: 1px solid transparent;
-      color: var(--text-dim);
+      border: none;
+      color: var(--muted-foreground);
       padding: 0.5rem 1rem;
-      border-radius: 8px;
+      border-radius: var(--radius);
       cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.2s;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .view-btn:hover { color: var(--text); background: var(--card-hover); }
-    .view-btn.active {
-      color: var(--accent);
-      background: var(--glow);
-      border-color: var(--accent);
+    .nav-btn:hover {
+      color: var(--foreground);
+    }
+
+    .nav-btn.active {
+      background: var(--card);
+      color: var(--foreground);
+      box-shadow: 0 1px 3px oklch(0 0 0 / 8%);
     }
 
     .topbar-right {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.75rem;
     }
 
     .status-indicator {
@@ -116,6 +181,9 @@
       gap: 0.5rem;
       font-size: 0.8rem;
       color: var(--green);
+      background: oklch(from var(--green) l c h / 15%);
+      padding: 0.4rem 0.75rem;
+      border-radius: 20px;
     }
 
     .status-dot {
@@ -123,29 +191,30 @@
       height: 8px;
       background: var(--green);
       border-radius: 50%;
-      animation: pulse 2s infinite;
+      animation: pulse 2s ease-in-out infinite;
     }
 
     @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.9); }
     }
 
     .theme-toggle {
-      background: var(--floor);
+      background: var(--muted);
       border: 1px solid var(--border);
       border-radius: 20px;
-      width: 50px;
-      height: 26px;
+      width: 52px;
+      height: 28px;
       cursor: pointer;
       position: relative;
+      transition: background 0.3s ease;
     }
 
     .theme-toggle-thumb {
       position: absolute;
-      width: 20px;
-      height: 20px;
-      background: var(--accent);
+      width: 22px;
+      height: 22px;
+      background: var(--card);
       border-radius: 50%;
       top: 2px;
       left: 3px;
@@ -153,70 +222,91 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 10px;
+      font-size: 12px;
+      box-shadow: 0 2px 4px oklch(0 0 0 / 15%);
     }
 
-    [data-theme="light"] .theme-toggle-thumb {
+    .dark .theme-toggle-thumb {
       transform: translateX(24px);
     }
 
-    /* Main Office Area */
-    .office {
-      margin-top: 56px;
-      height: calc(100vh - 56px);
+    /* Main Layout */
+    .main-layout {
+      margin-top: 64px;
+      min-height: calc(100vh - 64px);
       display: grid;
-      grid-template-columns: 1fr 380px;
-      background: var(--floor);
+      grid-template-columns: 1fr 400px;
+    }
+
+    .main-layout.full-width {
+      grid-template-columns: 1fr;
     }
 
     /* Office Floor */
     .office-floor {
-      padding: 1.5rem;
+      padding: 2rem;
       overflow-y: auto;
-      background:
-        radial-gradient(circle at 20% 80%, var(--glow) 0%, transparent 40%),
-        var(--floor);
+      max-height: calc(100vh - 64px);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--foreground);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-header p {
+      font-size: 1rem;
+      color: var(--muted-foreground);
     }
 
     /* Agent Desks Grid */
-    .desks-area {
+    .desks-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1.25rem;
       margin-bottom: 2rem;
     }
 
-    .desk {
+    .desk-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.25rem;
+      border-radius: calc(var(--radius) + 4px);
+      padding: 1.5rem;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
       overflow: hidden;
     }
 
-    .desk::before {
+    .desk-card::before {
       content: '';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
-      background: var(--desk-color, var(--accent));
-      opacity: 0.7;
+      height: 4px;
+      background: var(--desk-color, var(--primary));
+      opacity: 0.8;
     }
 
-    .desk:hover {
+    .desk-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 40px var(--glow);
-      border-color: var(--accent);
+      box-shadow:
+        0 12px 40px oklch(from var(--desk-color) l c h / 20%),
+        0 4px 12px oklch(0 0 0 / 8%);
+      border-color: oklch(from var(--desk-color) l c h / 40%);
     }
 
-    .desk.active {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 2px var(--glow);
+    .desk-card.active {
+      border-color: var(--desk-color, var(--primary));
+      box-shadow: 0 0 0 2px oklch(from var(--desk-color) l c h / 25%);
     }
 
     .desk-header {
@@ -227,25 +317,31 @@
     }
 
     .desk-avatar {
-      width: 48px;
-      height: 48px;
-      background: var(--floor);
-      border-radius: 12px;
+      width: 52px;
+      height: 52px;
+      background: oklch(from var(--desk-color) l c h / 12%);
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
+      transition: transform 0.3s ease;
+    }
+
+    .desk-card:hover .desk-avatar {
+      transform: scale(1.05);
     }
 
     .desk-status {
       font-size: 0.65rem;
-      padding: 0.25rem 0.5rem;
-      background: rgba(34, 197, 94, 0.15);
+      font-weight: 500;
+      padding: 0.25rem 0.6rem;
+      background: oklch(from var(--green) l c h / 15%);
       color: var(--green);
       border-radius: 10px;
       display: flex;
       align-items: center;
-      gap: 0.25rem;
+      gap: 0.3rem;
     }
 
     .desk-status::before {
@@ -258,13 +354,15 @@
 
     .desk-name {
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 1.05rem;
+      color: var(--foreground);
       margin-bottom: 0.25rem;
     }
 
     .desk-role {
-      font-size: 0.75rem;
-      color: var(--text-dim);
+      font-size: 0.8rem;
+      color: var(--desk-color);
+      font-weight: 500;
       margin-bottom: 0.75rem;
     }
 
@@ -276,32 +374,52 @@
 
     .skill-tag {
       font-size: 0.65rem;
-      padding: 0.2rem 0.5rem;
-      background: var(--floor);
+      font-weight: 500;
+      padding: 0.25rem 0.55rem;
+      background: var(--muted);
       border-radius: 6px;
-      color: var(--text-dim);
+      color: var(--muted-foreground);
     }
 
-    /* Meeting Room (Stats/Overview) */
-    .meeting-room {
+    /* Cards */
+    .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
+      border-radius: calc(var(--radius) + 4px);
+      padding: 1.5rem;
     }
 
-    .room-title {
-      font-size: 0.8rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 1rem;
+    .card.glass {
+      background: oklch(from var(--card) l c h / 60%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .card-header {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+      margin-bottom: 1.25rem;
     }
 
+    .card-header-icon {
+      width: 36px;
+      height: 36px;
+      background: oklch(from var(--primary) l c h / 12%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--foreground);
+    }
+
+    /* Stats Grid */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -310,29 +428,26 @@
 
     .stat-item {
       text-align: center;
+      padding: 1rem;
+      background: var(--muted);
+      border-radius: var(--radius);
     }
 
     .stat-value {
       font-size: 1.75rem;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--primary);
       line-height: 1;
     }
 
     .stat-label {
-      font-size: 0.7rem;
-      color: var(--text-dim);
-      margin-top: 0.35rem;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      margin-top: 0.4rem;
+      font-weight: 500;
     }
 
-    /* Bulletin Board (Learnings) */
-    .bulletin-board {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.25rem;
-    }
-
+    /* Bulletin Notes */
     .bulletin-items {
       display: flex;
       flex-direction: column;
@@ -340,62 +455,66 @@
     }
 
     .bulletin-note {
-      background: var(--floor);
+      background: var(--muted);
       border-left: 3px solid var(--yellow);
-      padding: 0.75rem;
-      border-radius: 0 8px 8px 0;
-      font-size: 0.85rem;
+      padding: 0.875rem 1rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.875rem;
+      line-height: 1.5;
     }
 
     .bulletin-note-tag {
       font-size: 0.65rem;
+      font-weight: 600;
       color: var(--yellow);
       text-transform: uppercase;
-      margin-bottom: 0.25rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.35rem;
     }
 
-    /* Chat Panel (Communication Hub) */
-    .comm-hub {
+    /* Chat Panel */
+    .chat-panel {
       background: var(--card);
       border-left: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      height: 100%;
+      height: calc(100vh - 64px);
     }
 
-    .comm-header {
-      padding: 1rem 1.25rem;
+    .chat-header {
+      padding: 1.25rem;
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.875rem;
     }
 
-    .comm-avatar {
-      width: 36px;
-      height: 36px;
-      background: var(--floor);
-      border-radius: 10px;
+    .chat-avatar {
+      width: 44px;
+      height: 44px;
+      background: oklch(from var(--primary) l c h / 12%);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      font-size: 1.25rem;
     }
 
-    .comm-info h3 {
-      font-size: 0.95rem;
+    .chat-info h3 {
+      font-size: 1rem;
       font-weight: 600;
+      color: var(--foreground);
     }
 
-    .comm-info span {
-      font-size: 0.75rem;
-      color: var(--text-dim);
+    .chat-info span {
+      font-size: 0.8rem;
+      color: var(--muted-foreground);
     }
 
-    .comm-messages {
+    .chat-messages {
       flex: 1;
       overflow-y: auto;
-      padding: 1rem;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
       gap: 1rem;
@@ -403,11 +522,11 @@
 
     .message {
       max-width: 85%;
-      animation: slideIn 0.3s ease;
+      animation: messageIn 0.3s ease;
     }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes messageIn {
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
@@ -416,27 +535,28 @@
     }
 
     .message-content {
-      padding: 0.75rem 1rem;
+      padding: 0.875rem 1.125rem;
       border-radius: 16px;
       font-size: 0.9rem;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
     .message.user .message-content {
-      background: var(--accent);
-      color: white;
+      background: var(--primary);
+      color: var(--primary-foreground);
       border-bottom-right-radius: 4px;
     }
 
     .message.assistant .message-content {
-      background: var(--floor);
+      background: var(--muted);
+      color: var(--foreground);
       border-bottom-left-radius: 4px;
     }
 
     .message-meta {
       font-size: 0.7rem;
-      color: var(--text-dim);
-      margin-top: 0.25rem;
+      color: var(--muted-foreground);
+      margin-top: 0.35rem;
       display: flex;
       align-items: center;
       gap: 0.35rem;
@@ -446,65 +566,99 @@
       justify-content: flex-end;
     }
 
-    .comm-input {
-      padding: 1rem;
+    .chat-input {
+      padding: 1.25rem;
       border-top: 1px solid var(--border);
       display: flex;
+      gap: 0.625rem;
+    }
+
+    .chat-input input {
+      flex: 1;
+      background: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0.75rem 1rem;
+      color: var(--foreground);
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .chat-input input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px oklch(from var(--primary) l c h / 15%);
+    }
+
+    .chat-input input::placeholder {
+      color: var(--muted-foreground);
+    }
+
+    .btn {
+      background: var(--primary);
+      border: none;
+      border-radius: var(--radius);
+      color: var(--primary-foreground);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: inherit;
+      padding: 0.75rem 1.25rem;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       gap: 0.5rem;
     }
 
-    .comm-input input {
-      flex: 1;
-      background: var(--floor);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      color: var(--text);
-      font-size: 0.9rem;
-      transition: border-color 0.2s;
+    .btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
-    .comm-input input:focus {
-      outline: none;
-      border-color: var(--accent);
+    .btn:active {
+      transform: translateY(0);
     }
 
-    .comm-input button {
-      background: var(--accent);
-      border: none;
-      border-radius: 12px;
-      width: 44px;
-      height: 44px;
-      color: white;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      transition: transform 0.2s;
-    }
-
-    .comm-input button:hover {
-      transform: scale(1.05);
-    }
-
-    .comm-input button:disabled {
+    .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
       transform: none;
     }
 
-    /* Launch Room View */
+    .btn-icon {
+      width: 44px;
+      height: 44px;
+      padding: 0;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted-foreground);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--muted);
+      color: var(--foreground);
+      border-color: var(--border);
+    }
+
+    /* Launch Room */
     .launch-room {
-      padding: 1.5rem;
+      padding: 2rem;
       overflow-y: auto;
+      max-height: calc(100vh - 64px);
     }
 
     .launch-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     .launch-title {
@@ -514,52 +668,63 @@
     }
 
     .launch-title h2 {
-      font-size: 1.25rem;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--foreground);
     }
 
     .launch-title span {
-      font-size: 0.8rem;
-      color: var(--text-dim);
+      font-size: 0.85rem;
+      color: var(--muted-foreground);
+      background: var(--muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
     }
 
     .launch-tabs {
       display: flex;
       gap: 0.25rem;
-      background: var(--card);
+      background: var(--muted);
       padding: 0.25rem;
-      border-radius: 10px;
+      border-radius: calc(var(--radius) + 2px);
     }
 
     .launch-tab {
       background: transparent;
       border: none;
-      color: var(--text-dim);
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+      color: var(--muted-foreground);
+      padding: 0.5rem 1.125rem;
+      border-radius: var(--radius);
       cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.2s;
+      font-size: 0.875rem;
+      font-weight: 500;
+      font-family: inherit;
+      transition: all 0.2s ease;
     }
 
-    .launch-tab:hover { color: var(--text); }
+    .launch-tab:hover {
+      color: var(--foreground);
+    }
+
     .launch-tab.active {
-      background: var(--floor);
-      color: var(--text);
+      background: var(--card);
+      color: var(--foreground);
+      box-shadow: 0 1px 3px oklch(0 0 0 / 8%);
     }
 
-    /* Kanban-style Pipeline */
+    /* Pipeline */
     .pipeline {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      margin-top: 1rem;
     }
 
     .pipeline-column {
-      background: var(--card);
-      border-radius: 12px;
+      background: var(--muted);
+      border-radius: var(--radius);
       padding: 1rem;
-      min-height: 300px;
+      min-height: 320px;
     }
 
     .pipeline-header {
@@ -572,8 +737,9 @@
     }
 
     .pipeline-title {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 600;
+      color: var(--foreground);
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -581,10 +747,11 @@
 
     .pipeline-count {
       font-size: 0.7rem;
-      background: var(--floor);
-      padding: 0.2rem 0.5rem;
+      font-weight: 500;
+      background: var(--card);
+      padding: 0.2rem 0.55rem;
       border-radius: 10px;
-      color: var(--text-dim);
+      color: var(--muted-foreground);
     }
 
     .pipeline-cards {
@@ -594,11 +761,11 @@
     }
 
     .pipeline-card {
-      background: var(--floor);
-      border-radius: 8px;
-      padding: 0.75rem;
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 0.875rem;
       cursor: pointer;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
       border: 1px solid transparent;
     }
 
@@ -608,51 +775,50 @@
     }
 
     .pipeline-card-name {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: 500;
+      color: var(--foreground);
       margin-bottom: 0.25rem;
     }
 
     .pipeline-card-meta {
-      font-size: 0.7rem;
-      color: var(--text-dim);
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
     }
 
-    /* Milestones Track */
-    .milestones-track {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
+    /* Milestones */
+    .milestones-section {
+      margin-top: 1rem;
     }
 
     .milestone-progress {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
     }
 
     .milestone-bar {
       flex: 1;
-      height: 8px;
-      background: var(--floor);
-      border-radius: 4px;
+      height: 10px;
+      background: var(--muted);
+      border-radius: 5px;
       overflow: hidden;
     }
 
     .milestone-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--accent), var(--cyan));
-      border-radius: 4px;
-      transition: width 0.5s ease;
+      background: linear-gradient(90deg, var(--primary), var(--purple));
+      border-radius: 5px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .milestone-percent {
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: 600;
-      color: var(--accent);
-      min-width: 45px;
+      color: var(--primary);
+      min-width: 50px;
+      text-align: right;
     }
 
     .milestones-list {
@@ -664,27 +830,29 @@
     .milestone-item {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.5rem;
-      border-radius: 8px;
+      gap: 0.875rem;
+      padding: 0.75rem;
+      border-radius: var(--radius);
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s ease;
+      background: var(--muted);
     }
 
     .milestone-item:hover {
-      background: var(--floor);
+      background: oklch(from var(--muted) l c h / 80%);
     }
 
     .milestone-check {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       border: 2px solid var(--border);
       border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
-      transition: all 0.2s;
+      font-size: 0.75rem;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
     }
 
     .milestone-item.completed .milestone-check {
@@ -694,76 +862,91 @@
     }
 
     .milestone-item.in-progress .milestone-check {
-      border-color: var(--accent);
-      color: var(--accent);
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
     .milestone-text {
       flex: 1;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
+      color: var(--foreground);
     }
 
     .milestone-item.completed .milestone-text {
-      color: var(--text-dim);
+      color: var(--muted-foreground);
       text-decoration: line-through;
     }
 
-    /* Quick Add Forms */
+    /* Quick Add */
     .quick-add {
       display: flex;
       gap: 0.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.25rem;
     }
 
-    .quick-add input, .quick-add select {
-      background: var(--floor);
+    .quick-add input,
+    .quick-add select {
+      background: var(--muted);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.6rem 0.75rem;
-      color: var(--text);
-      font-size: 0.85rem;
+      border-radius: var(--radius);
+      padding: 0.65rem 0.875rem;
+      color: var(--foreground);
+      font-size: 0.875rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
-    .quick-add input { flex: 1; }
-    .quick-add input:focus, .quick-add select:focus {
+    .quick-add input {
+      flex: 1;
+    }
+
+    .quick-add input:focus,
+    .quick-add select:focus {
       outline: none;
-      border-color: var(--accent);
-    }
-
-    .quick-add button {
-      background: var(--accent);
-      border: none;
-      border-radius: 8px;
-      padding: 0.6rem 1rem;
-      color: white;
-      cursor: pointer;
-      font-size: 0.85rem;
-      white-space: nowrap;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px oklch(from var(--primary) l c h / 15%);
     }
 
     /* Modal */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
+      background: oklch(0 0 0 / 50%);
       backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 1000;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     .modal {
       background: var(--card);
-      border-radius: 16px;
-      padding: 1.5rem;
+      border-radius: calc(var(--radius) + 4px);
+      padding: 1.75rem;
       width: 90%;
-      max-width: 400px;
+      max-width: 420px;
       border: 1px solid var(--border);
+      box-shadow: 0 20px 60px oklch(0 0 0 / 25%);
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .modal h3 {
-      margin-bottom: 1rem;
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      color: var(--foreground);
     }
 
     .modal-field {
@@ -773,95 +956,461 @@
     .modal-field label {
       display: block;
       font-size: 0.8rem;
-      color: var(--text-dim);
-      margin-bottom: 0.35rem;
+      font-weight: 500;
+      color: var(--muted-foreground);
+      margin-bottom: 0.4rem;
     }
 
-    .modal-field input, .modal-field select {
+    .modal-field input,
+    .modal-field select {
       width: 100%;
-      background: var(--floor);
+      background: var(--muted);
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.6rem 0.75rem;
-      color: var(--text);
+      border-radius: var(--radius);
+      padding: 0.65rem 0.875rem;
+      color: var(--foreground);
       font-size: 0.9rem;
+      font-family: inherit;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .modal-field input:focus,
+    .modal-field select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px oklch(from var(--primary) l c h / 15%);
     }
 
     .modal-actions {
       display: flex;
       gap: 0.5rem;
       justify-content: flex-end;
-      margin-top: 1.25rem;
+      margin-top: 1.5rem;
     }
 
-    .btn {
-      padding: 0.6rem 1.25rem;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      border: none;
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
     }
 
-    .btn-primary {
-      background: var(--accent);
-      color: white;
+    ::-webkit-scrollbar-track {
+      background: var(--muted);
     }
 
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-dim);
-      border: 1px solid var(--border);
+    ::-webkit-scrollbar-thumb {
+      background: oklch(from var(--muted-foreground) l c h / 30%);
+      border-radius: 4px;
     }
 
-    .btn-ghost:hover {
-      color: var(--text);
-      border-color: var(--text-dim);
+    ::-webkit-scrollbar-thumb:hover {
+      background: oklch(from var(--muted-foreground) l c h / 50%);
     }
 
     .hidden { display: none !important; }
+
+    /* Mobile Navigation */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--card);
+      border-top: 1px solid var(--border);
+      padding: 0.5rem;
+      z-index: 100;
+      justify-content: space-around;
+    }
+
+    .mobile-nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--muted-foreground);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-nav-btn span:first-child {
+      font-size: 1.25rem;
+    }
+
+    .mobile-nav-btn.active {
+      color: var(--primary);
+    }
+
+    .mobile-nav-btn:hover {
+      color: var(--foreground);
+    }
+
+    /* Chat Back Button (mobile) */
+    .chat-back-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      color: var(--muted-foreground);
+      padding: 0.5rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 1.25rem;
+      margin-right: 0.5rem;
+    }
+
+    .chat-back-btn:hover {
+      color: var(--foreground);
+      background: var(--muted);
+    }
+
+    /* Responsive - Tablet */
+    @media (max-width: 1024px) {
+      .main-layout {
+        grid-template-columns: 1fr;
+        margin-bottom: 60px;
+      }
+
+      .chat-panel {
+        display: none;
+        position: fixed;
+        top: 64px;
+        left: 0;
+        right: 0;
+        bottom: 60px;
+        height: auto;
+        border-left: none;
+        z-index: 50;
+      }
+
+      .main-layout.show-chat .office-floor {
+        display: none;
+      }
+
+      .main-layout.show-chat .chat-panel {
+        display: flex;
+      }
+
+      .chat-back-btn {
+        display: block;
+      }
+
+      .mobile-nav {
+        display: flex;
+      }
+
+      .topbar-center {
+        display: none;
+      }
+
+      .pipeline {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .launch-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .launch-tabs {
+        width: 100%;
+        overflow-x: auto;
+      }
+    }
+
+    /* Responsive - Mobile */
+    @media (max-width: 640px) {
+      .topbar {
+        padding: 0 1rem;
+        height: 56px;
+      }
+
+      .main-layout {
+        margin-top: 56px;
+      }
+
+      .chat-panel {
+        top: 56px;
+      }
+
+      .logo-text span:last-child {
+        display: none;
+      }
+
+      .logo-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+      }
+
+      .status-indicator span {
+        display: none;
+      }
+
+      .status-indicator {
+        padding: 0.4rem;
+        border-radius: 50%;
+      }
+
+      .office-floor,
+      .launch-room {
+        padding: 1rem;
+        max-height: calc(100vh - 56px - 60px);
+      }
+
+      .section-header h2 {
+        font-size: 1.5rem;
+      }
+
+      .section-header p {
+        font-size: 0.875rem;
+      }
+
+      .pipeline {
+        grid-template-columns: 1fr;
+      }
+
+      .pipeline-column {
+        min-height: 200px;
+      }
+
+      .desks-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+      }
+
+      .desk-card {
+        padding: 1rem;
+      }
+
+      .desk-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1.25rem;
+        border-radius: 10px;
+      }
+
+      .desk-name {
+        font-size: 0.9rem;
+      }
+
+      .desk-role {
+        font-size: 0.7rem;
+      }
+
+      .desk-skills {
+        display: none;
+      }
+
+      .desk-status {
+        font-size: 0.6rem;
+        padding: 0.2rem 0.4rem;
+      }
+
+      .card {
+        padding: 1rem;
+      }
+
+      .card-header {
+        margin-bottom: 1rem;
+      }
+
+      .card-header-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+      }
+
+      .card-title {
+        font-size: 1rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+
+      .stat-item {
+        padding: 0.75rem;
+      }
+
+      .stat-value {
+        font-size: 1.25rem;
+      }
+
+      .stat-label {
+        font-size: 0.65rem;
+      }
+
+      .quick-add {
+        flex-wrap: wrap;
+      }
+
+      .quick-add input {
+        width: 100%;
+        flex: none;
+      }
+
+      .quick-add select {
+        flex: 1;
+      }
+
+      .quick-add button {
+        flex: none;
+      }
+
+      .launch-title h2 {
+        font-size: 1.25rem;
+      }
+
+      .launch-title span {
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+      }
+
+      .launch-tabs {
+        width: 100%;
+      }
+
+      .launch-tab {
+        flex: 1;
+        text-align: center;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+      }
+
+      .chat-input {
+        padding: 1rem;
+      }
+
+      .chat-input input {
+        padding: 0.625rem 0.875rem;
+        font-size: 1rem; /* Prevents zoom on iOS */
+      }
+
+      .btn-icon {
+        width: 40px;
+        height: 40px;
+      }
+
+      .message-content {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+      }
+
+      .modal {
+        width: 95%;
+        padding: 1.25rem;
+        margin: 1rem;
+      }
+
+      .bulletin-note {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 380px) {
+      .desks-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .desk-skills {
+        display: flex;
+      }
+    }
+
+    /* Landscape phone */
+    @media (max-height: 500px) and (orientation: landscape) {
+      .office-floor,
+      .launch-room {
+        max-height: calc(100vh - 56px);
+      }
+
+      .mobile-nav {
+        display: none;
+      }
+
+      .topbar-center {
+        display: flex;
+      }
+
+      .main-layout {
+        margin-bottom: 0;
+      }
+
+      .chat-panel {
+        bottom: 0;
+      }
+    }
   </style>
 </head>
-<body>
+<body class="gradient-bg">
   <!-- Top Bar -->
-  <div class="topbar">
+  <header class="topbar">
     <div class="logo">
-      <span class="logo-icon">🏢</span>
-      <span>My</span> Office
+      <div class="logo-icon">🏢</div>
+      <div class="logo-text">
+        <span>My AI Office</span>
+        <span>Your Personal AI Team</span>
+      </div>
     </div>
-    <div class="topbar-center">
-      <button class="view-btn active" onclick="showView('office')">
+
+    <nav class="topbar-center">
+      <button class="nav-btn active" onclick="showView('office')">
         <span>🏠</span> Office
       </button>
-      <button class="view-btn" onclick="showView('launch')">
+      <button class="nav-btn" onclick="showView('launch')">
         <span>🚀</span> Launch Room
       </button>
-    </div>
+    </nav>
+
     <div class="topbar-right">
       <div class="status-indicator">
         <div class="status-dot"></div>
-        <span>All systems online</span>
+        <span>Online</span>
       </div>
       <div class="theme-toggle" onclick="toggleTheme()">
-        <div class="theme-toggle-thumb">🌙</div>
+        <div class="theme-toggle-thumb">☀️</div>
       </div>
     </div>
-  </div>
+  </header>
 
-  <!-- Main Office View -->
-  <div class="office" id="office-view">
-    <div class="office-floor">
+  <!-- Office View -->
+  <main class="main-layout" id="office-view">
+    <section class="office-floor">
+      <div class="section-header">
+        <h2>Your AI Team</h2>
+        <p>Click on any desk to start a conversation</p>
+      </div>
+
       <!-- Agent Desks -->
-      <div class="desks-area" id="desks-area"></div>
+      <div class="desks-grid" id="desks-grid"></div>
 
       <!-- Meeting Room Stats -->
-      <div class="meeting-room">
-        <div class="room-title">
-          <span>📊</span> Meeting Room - Today's Overview
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <div class="card-header-icon">📊</div>
+          <h3 class="card-title">Meeting Room</h3>
         </div>
         <div class="stats-grid" id="stats-grid">
           <div class="stat-item">
             <div class="stat-value">0</div>
-            <div class="stat-label">Tasks</div>
+            <div class="stat-label">Milestones</div>
           </div>
           <div class="stat-item">
             <div class="stat-value">0</div>
@@ -879,9 +1428,10 @@
       </div>
 
       <!-- Bulletin Board -->
-      <div class="bulletin-board">
-        <div class="room-title">
-          <span>📌</span> Bulletin Board - Recent Learnings
+      <div class="card">
+        <div class="card-header">
+          <div class="card-header-icon">💡</div>
+          <h3 class="card-title">Bulletin Board</h3>
         </div>
         <div class="bulletin-items" id="bulletin-items">
           <div class="bulletin-note">
@@ -890,96 +1440,131 @@
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Communication Hub -->
-    <div class="comm-hub">
-      <div class="comm-header">
-        <div class="comm-avatar" id="comm-avatar">🎯</div>
-        <div class="comm-info">
-          <h3 id="comm-name">Orchestrator</h3>
-          <span id="comm-role">Team Coordinator</span>
+    <!-- Chat Panel -->
+    <aside class="chat-panel">
+      <div class="chat-header">
+        <button class="chat-back-btn" onclick="mobileNav('office')">←</button>
+        <div class="chat-avatar" id="chat-avatar">🎯</div>
+        <div class="chat-info">
+          <h3 id="chat-name">Orchestrator</h3>
+          <span id="chat-role">Team Coordinator</span>
         </div>
       </div>
-      <div class="comm-messages" id="comm-messages">
+      <div class="chat-messages" id="chat-messages">
         <div class="message assistant">
           <div class="message-content">Hey! Welcome to the office. I'm your team coordinator - tell me what you need and I'll connect you with the right person.</div>
           <div class="message-meta">
-            <span>🎯</span> Orchestrator • Just now
+            <span>🎯</span> Orchestrator
           </div>
         </div>
       </div>
-      <div class="comm-input">
+      <div class="chat-input">
         <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
-        <button onclick="sendMessage()" id="send-btn">➤</button>
+        <button class="btn btn-icon" onclick="sendMessage()" id="send-btn">➤</button>
       </div>
-    </div>
-  </div>
+    </aside>
+  </main>
 
   <!-- Launch Room View -->
-  <div class="office hidden" id="launch-view" style="grid-template-columns: 1fr;">
-    <div class="launch-room">
+  <main class="main-layout full-width hidden" id="launch-view">
+    <section class="launch-room">
       <div class="launch-header">
         <div class="launch-title">
           <h2>🚀 LoanFlow Launch</h2>
           <span>loanflow.pages.dev</span>
         </div>
-        <div class="launch-tabs">
+        <nav class="launch-tabs">
           <button class="launch-tab active" onclick="showLaunchTab('pipeline')">Pipeline</button>
           <button class="launch-tab" onclick="showLaunchTab('milestones')">Milestones</button>
           <button class="launch-tab" onclick="showLaunchTab('learnings')">Learnings</button>
-        </div>
+        </nav>
       </div>
 
       <!-- Pipeline Tab -->
       <div id="pipeline-tab">
-        <div class="quick-add">
-          <input type="text" id="contact-name" placeholder="Contact name...">
-          <select id="contact-channel">
-            <option value="Facebook Group">Facebook</option>
-            <option value="Reddit">Reddit</option>
-            <option value="Email">Email</option>
-            <option value="LinkedIn">LinkedIn</option>
-            <option value="Referral">Referral</option>
-          </select>
-          <button onclick="addContact()">+ Add Contact</button>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">🎯</div>
+            <h3 class="card-title">Contact Pipeline</h3>
+          </div>
+          <div class="quick-add">
+            <input type="text" id="contact-name" placeholder="Contact name...">
+            <select id="contact-channel">
+              <option value="Facebook Group">Facebook</option>
+              <option value="Reddit">Reddit</option>
+              <option value="Email">Email</option>
+              <option value="LinkedIn">LinkedIn</option>
+              <option value="Referral">Referral</option>
+            </select>
+            <button class="btn" onclick="addContact()">+ Add</button>
+          </div>
+          <div class="pipeline" id="pipeline"></div>
         </div>
-        <div class="pipeline" id="pipeline"></div>
       </div>
 
       <!-- Milestones Tab -->
       <div id="milestones-tab" class="hidden">
-        <div class="milestones-track">
-          <div class="milestone-progress">
-            <div class="milestone-bar">
-              <div class="milestone-fill" id="milestone-fill" style="width: 0%"></div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">✅</div>
+            <h3 class="card-title">Milestones</h3>
+          </div>
+          <div class="milestones-section">
+            <div class="milestone-progress">
+              <div class="milestone-bar">
+                <div class="milestone-fill" id="milestone-fill" style="width: 0%"></div>
+              </div>
+              <div class="milestone-percent" id="milestone-percent">0%</div>
             </div>
-            <div class="milestone-percent" id="milestone-percent">0%</div>
+            <div class="quick-add">
+              <input type="text" id="new-milestone" placeholder="Add a milestone...">
+              <button class="btn" onclick="addMilestone()">+ Add</button>
+            </div>
+            <div class="milestones-list" id="milestones-list"></div>
           </div>
-          <div class="quick-add">
-            <input type="text" id="new-milestone" placeholder="Add a milestone...">
-            <button onclick="addMilestone()">+ Add</button>
-          </div>
-          <div class="milestones-list" id="milestones-list"></div>
         </div>
       </div>
 
       <!-- Learnings Tab -->
       <div id="learnings-tab" class="hidden">
-        <div class="quick-add">
-          <select id="learning-category">
-            <option value="User Feedback">User Feedback</option>
-            <option value="Market Insight">Market Insight</option>
-            <option value="Channel Performance">Channel</option>
-            <option value="Product Idea">Product Idea</option>
-          </select>
-          <input type="text" id="learning-content" placeholder="What did you learn?">
-          <button onclick="addLearning()">+ Add</button>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-icon">💡</div>
+            <h3 class="card-title">Learnings Board</h3>
+          </div>
+          <div class="quick-add">
+            <select id="learning-category">
+              <option value="User Feedback">User Feedback</option>
+              <option value="Market Insight">Market Insight</option>
+              <option value="Channel Performance">Channel</option>
+              <option value="Product Idea">Product Idea</option>
+            </select>
+            <input type="text" id="learning-content" placeholder="What did you learn?">
+            <button class="btn" onclick="addLearning()">+ Add</button>
+          </div>
+          <div class="bulletin-items" id="learnings-list"></div>
         </div>
-        <div class="bulletin-items" id="learnings-list"></div>
       </div>
-    </div>
-  </div>
+    </section>
+  </main>
+
+  <!-- Mobile Navigation -->
+  <nav class="mobile-nav" id="mobile-nav">
+    <button class="mobile-nav-btn active" onclick="mobileNav('office')">
+      <span>🏠</span>
+      <span>Office</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="mobileNav('chat')">
+      <span>💬</span>
+      <span>Chat</span>
+    </button>
+    <button class="mobile-nav-btn" onclick="mobileNav('launch')">
+      <span>🚀</span>
+      <span>Launch</span>
+    </button>
+  </nav>
 
   <!-- Contact Modal -->
   <div id="contact-modal" class="modal-overlay hidden">
@@ -1002,7 +1587,7 @@
       </div>
       <div class="modal-actions">
         <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-        <button class="btn btn-primary" onclick="saveContact()">Save</button>
+        <button class="btn" onclick="saveContact()">Save</button>
       </div>
     </div>
   </div>
@@ -1013,15 +1598,15 @@
     let currentContactId = null;
 
     const agents = [
-      { role: 'orchestrator', name: 'Orchestrator', icon: '🎯', title: 'Team Coordinator', color: '#3b82f6',
+      { role: 'orchestrator', name: 'Orchestrator', icon: '🎯', title: 'Team Coordinator', color: 'var(--blue)',
         skills: ['Task routing', 'Preferences', 'Coordination'] },
-      { role: 'dev', name: 'Dev', icon: '💻', title: 'Software Engineer', color: '#22c55e',
+      { role: 'dev', name: 'Dev', icon: '💻', title: 'Software Engineer', color: 'var(--green)',
         skills: ['Coding', 'Debugging', 'Architecture'] },
-      { role: 'research', name: 'Research', icon: '🔍', title: 'Research Analyst', color: '#eab308',
+      { role: 'research', name: 'Research', icon: '🔍', title: 'Research Analyst', color: 'var(--yellow)',
         skills: ['Web research', 'Summaries', 'Analysis'] },
-      { role: 'comms', name: 'Comms', icon: '✉️', title: 'Communications Lead', color: '#a855f7',
+      { role: 'comms', name: 'Comms', icon: '✉️', title: 'Communications Lead', color: 'var(--purple)',
         skills: ['Emails', 'Docs', 'Reports'] },
-      { role: 'workflow', name: 'Workflow', icon: '⚡', title: 'Operations Manager', color: '#06b6d4',
+      { role: 'workflow', name: 'Workflow', icon: '⚡', title: 'Operations Manager', color: 'var(--teal)',
         skills: ['Tasks', 'Automation', 'Workflows'] }
     ];
 
@@ -1035,25 +1620,59 @@
 
     // Theme
     function toggleTheme() {
-      const current = document.documentElement.getAttribute('data-theme');
-      const next = current === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      document.querySelector('.theme-toggle-thumb').textContent = next === 'light' ? '☀️' : '🌙';
+      document.body.classList.toggle('dark');
+      const isDark = document.body.classList.contains('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      document.querySelector('.theme-toggle-thumb').textContent = isDark ? '🌙' : '☀️';
     }
 
     function loadTheme() {
-      const saved = localStorage.getItem('theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', saved);
-      document.querySelector('.theme-toggle-thumb').textContent = saved === 'light' ? '☀️' : '🌙';
+      const saved = localStorage.getItem('theme');
+      if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.body.classList.add('dark');
+        document.querySelector('.theme-toggle-thumb').textContent = '🌙';
+      }
     }
 
     // Views
     function showView(view) {
-      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-      event.target.closest('.view-btn').classList.add('active');
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      event.target.closest('.nav-btn').classList.add('active');
       document.getElementById('office-view').classList.toggle('hidden', view !== 'office');
       document.getElementById('launch-view').classList.toggle('hidden', view !== 'launch');
+      document.getElementById('office-view').classList.remove('show-chat');
+      updateMobileNav(view);
+    }
+
+    // Mobile Navigation
+    function mobileNav(view) {
+      const officeView = document.getElementById('office-view');
+      const launchView = document.getElementById('launch-view');
+
+      updateMobileNav(view);
+
+      if (view === 'office') {
+        officeView.classList.remove('hidden', 'show-chat');
+        launchView.classList.add('hidden');
+      } else if (view === 'chat') {
+        officeView.classList.remove('hidden');
+        officeView.classList.add('show-chat');
+        launchView.classList.add('hidden');
+      } else if (view === 'launch') {
+        officeView.classList.add('hidden');
+        officeView.classList.remove('show-chat');
+        launchView.classList.remove('hidden');
+      }
+    }
+
+    function updateMobileNav(view) {
+      document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const navBtns = document.querySelectorAll('.mobile-nav-btn');
+      if (view === 'office') navBtns[0].classList.add('active');
+      else if (view === 'chat') navBtns[1].classList.add('active');
+      else if (view === 'launch') navBtns[2].classList.add('active');
     }
 
     function showLaunchTab(tab) {
@@ -1066,9 +1685,9 @@
 
     // Render Desks
     function renderDesks() {
-      const area = document.getElementById('desks-area');
-      area.innerHTML = agents.map(a => `
-        <div class="desk ${a.role === currentAgent ? 'active' : ''}"
+      const grid = document.getElementById('desks-grid');
+      grid.innerHTML = agents.map(a => `
+        <div class="desk-card ${a.role === currentAgent ? 'active' : ''}"
              style="--desk-color: ${a.color}"
              onclick="selectAgent('${a.role}')">
           <div class="desk-header">
@@ -1087,10 +1706,15 @@
     function selectAgent(role) {
       currentAgent = role;
       const agent = agents.find(a => a.role === role);
-      document.getElementById('comm-avatar').textContent = agent.icon;
-      document.getElementById('comm-name').textContent = agent.name;
-      document.getElementById('comm-role').textContent = agent.title;
+      document.getElementById('chat-avatar').textContent = agent.icon;
+      document.getElementById('chat-name').textContent = agent.name;
+      document.getElementById('chat-role').textContent = agent.title;
       renderDesks();
+
+      // On mobile, open chat when selecting an agent
+      if (window.innerWidth <= 1024) {
+        mobileNav('chat');
+      }
     }
 
     // Load Stats
@@ -1117,12 +1741,11 @@
             </div>
           `;
 
-          // Update bulletin
           if (summary.learnings.length > 0) {
             document.getElementById('bulletin-items').innerHTML = summary.learnings.slice(0, 3).map(l => `
               <div class="bulletin-note">
                 <div class="bulletin-note-tag">${l.category}</div>
-                ${l.content}
+                ${escapeHtml(l.content)}
               </div>
             `).join('');
           }
@@ -1136,14 +1759,24 @@
       const message = input.value.trim();
       if (!message) return;
 
-      const messagesDiv = document.getElementById('comm-messages');
+      const messagesDiv = document.getElementById('chat-messages');
       const sendBtn = document.getElementById('send-btn');
       const agent = agents.find(a => a.role === currentAgent);
 
       messagesDiv.innerHTML += `
         <div class="message user">
           <div class="message-content">${escapeHtml(message)}</div>
-          <div class="message-meta">You • Just now</div>
+          <div class="message-meta">You</div>
+        </div>
+      `;
+
+      // Add loading indicator
+      const loadingId = 'loading-' + Date.now();
+      messagesDiv.innerHTML += `
+        <div class="message assistant" id="${loadingId}">
+          <div class="message-content" style="opacity: 0.6;">
+            <span class="typing-indicator">Thinking...</span>
+          </div>
         </div>
       `;
 
@@ -1158,26 +1791,45 @@
           body: JSON.stringify({ message, agent: currentAgent })
         });
 
+        // Remove loading indicator
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
         const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
         messagesDiv.innerHTML += `
           <div class="message assistant">
-            <div class="message-content">${escapeHtml(data.content)}</div>
+            <div class="message-content">${escapeHtml(data.content || 'No response')}</div>
             <div class="message-meta">
-              <span>${agent.icon}</span> ${agent.name} • Just now
+              <span>${agent.icon}</span> ${agent.name}
             </div>
           </div>
         `;
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
         loadStats();
       } catch (e) {
+        // Remove loading indicator
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+
+        console.error('Chat error:', e);
         messagesDiv.innerHTML += `
           <div class="message assistant">
-            <div class="message-content" style="color: var(--red)">Connection error. Please try again.</div>
+            <div class="message-content" style="color: var(--destructive)">Error: ${escapeHtml(e.message || 'Connection failed')}</div>
           </div>
         `;
       }
 
       sendBtn.disabled = false;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
     function handleKeyPress(e) {
@@ -1213,8 +1865,8 @@
             <div class="pipeline-cards">
               ${stage.items.map(c => `
                 <div class="pipeline-card" onclick="openModal(${c.id}, '${c.status}', '${escapeHtml(c.notes || '')}')">
-                  <div class="pipeline-card-name">${c.name}</div>
-                  <div class="pipeline-card-meta">${c.channel}</div>
+                  <div class="pipeline-card-name">${escapeHtml(c.name)}</div>
+                  <div class="pipeline-card-meta">${escapeHtml(c.channel)}</div>
                 </div>
               `).join('')}
             </div>
@@ -1231,17 +1883,17 @@
           <div class="milestone-item ${m.status === 'completed' ? 'completed' : m.status === 'in_progress' ? 'in-progress' : ''}"
                onclick="cycleMilestone(${m.id}, '${m.status}')">
             <div class="milestone-check">${m.status === 'completed' ? '✓' : m.status === 'in_progress' ? '◐' : ''}</div>
-            <div class="milestone-text">${m.title}</div>
+            <div class="milestone-text">${escapeHtml(m.title)}</div>
           </div>
         `).join('');
 
         // Learnings
         document.getElementById('learnings-list').innerHTML = summary.learnings.map(l => `
           <div class="bulletin-note">
-            <div class="bulletin-note-tag">${l.category}</div>
-            ${l.content}
+            <div class="bulletin-note-tag">${escapeHtml(l.category)}</div>
+            ${escapeHtml(l.content)}
           </div>
-        `).join('') || '<p style="color: var(--text-dim);">No learnings yet.</p>';
+        `).join('') || '<p style="color: var(--muted-foreground); text-align: center; padding: 2rem;">No learnings yet.</p>';
 
       } catch (e) {
         console.error(e);
