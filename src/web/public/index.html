@@ -3,15 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Team Office</title>
+  <title>My AI Office</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     /* Dark Theme (default) */
     :root {
-      --bg: #0f0f0f;
-      --card: #1a1a1a;
-      --border: #2a2a2a;
+      --bg: #0a0a0f;
+      --floor: #12121a;
+      --card: #1a1a24;
+      --card-hover: #22222e;
+      --border: #2a2a3a;
       --text: #e0e0e0;
       --text-dim: #888;
       --accent: #3b82f6;
@@ -20,14 +22,16 @@
       --red: #ef4444;
       --purple: #a855f7;
       --cyan: #06b6d4;
-      --shadow: rgba(0,0,0,0.3);
+      --glow: rgba(59, 130, 246, 0.3);
     }
 
     /* Light Theme */
     [data-theme="light"] {
-      --bg: #f5f5f5;
+      --bg: #e8eaed;
+      --floor: #f5f5f7;
       --card: #ffffff;
-      --border: #e0e0e0;
+      --card-hover: #f0f0f5;
+      --border: #d0d0d8;
       --text: #1a1a1a;
       --text-dim: #666;
       --accent: #2563eb;
@@ -36,7 +40,7 @@
       --red: #dc2626;
       --purple: #9333ea;
       --cyan: #0891b2;
-      --shadow: rgba(0,0,0,0.1);
+      --glow: rgba(37, 99, 235, 0.2);
     }
 
     body {
@@ -44,147 +48,314 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
+      overflow: hidden;
     }
 
-    /* Header */
-    header {
+    /* Top Bar */
+    .topbar {
       background: var(--card);
       border-bottom: 1px solid var(--border);
-      padding: 1rem 2rem;
+      padding: 0.75rem 1.5rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      height: 56px;
     }
 
     .logo {
-      font-size: 1.5rem;
+      font-size: 1.25rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
+    .logo-icon { font-size: 1.5rem; }
     .logo span { color: var(--accent); }
 
-    /* Navigation */
-    nav {
+    .topbar-center {
       display: flex;
       gap: 0.5rem;
     }
 
-    nav button {
+    .view-btn {
       background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
+      border: 1px solid transparent;
+      color: var(--text-dim);
       padding: 0.5rem 1rem;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
-    nav button:hover, nav button.active {
-      background: var(--accent);
+    .view-btn:hover { color: var(--text); background: var(--card-hover); }
+    .view-btn.active {
+      color: var(--accent);
+      background: var(--glow);
       border-color: var(--accent);
     }
 
-    /* Main Layout */
-    main {
-      display: grid;
-      grid-template-columns: 1fr 400px;
-      height: calc(100vh - 60px);
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
     }
 
-    /* Sections */
-    .section {
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--green);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .theme-toggle {
+      background: var(--floor);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      width: 50px;
+      height: 26px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .theme-toggle-thumb {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 50%;
+      top: 2px;
+      left: 3px;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    [data-theme="light"] .theme-toggle-thumb {
+      transform: translateX(24px);
+    }
+
+    /* Main Office Area */
+    .office {
+      margin-top: 56px;
+      height: calc(100vh - 56px);
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      background: var(--floor);
+    }
+
+    /* Office Floor */
+    .office-floor {
       padding: 1.5rem;
       overflow-y: auto;
+      background:
+        radial-gradient(circle at 20% 80%, var(--glow) 0%, transparent 40%),
+        var(--floor);
     }
 
-    .section-title {
-      font-size: 1.1rem;
+    /* Agent Desks Grid */
+    .desks-area {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .desk {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .desk::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--desk-color, var(--accent));
+      opacity: 0.7;
+    }
+
+    .desk:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px var(--glow);
+      border-color: var(--accent);
+    }
+
+    .desk.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px var(--glow);
+    }
+
+    .desk-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .desk-avatar {
+      width: 48px;
+      height: 48px;
+      background: var(--floor);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .desk-status {
+      font-size: 0.65rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--green);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .desk-status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+    }
+
+    .desk-name {
       font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .desk-role {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 0.75rem;
+    }
+
+    .desk-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .skill-tag {
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      background: var(--floor);
+      border-radius: 6px;
+      color: var(--text-dim);
+    }
+
+    /* Meeting Room (Stats/Overview) */
+    .meeting-room {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .room-title {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       margin-bottom: 1rem;
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    /* Cards */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-    }
-
-    .card-title {
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-    }
-
-    /* Agent Grid */
-    .agents-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .agent-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .agent-card:hover, .agent-card.selected {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-    }
-
-    .agent-icon { font-size: 2rem; margin-bottom: 0.5rem; }
-    .agent-name { font-weight: 600; margin-bottom: 0.25rem; }
-    .agent-desc { font-size: 0.75rem; color: var(--text-dim); }
-    .agent-status {
-      font-size: 0.7rem;
-      color: var(--green);
-      margin-top: 0.5rem;
-    }
-
-    /* Stats Row */
-    .stats-row {
+    .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
-      margin-bottom: 1.5rem;
     }
 
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
+    .stat-item {
       text-align: center;
     }
 
     .stat-value {
-      font-size: 2rem;
+      font-size: 1.75rem;
       font-weight: 700;
       color: var(--accent);
+      line-height: 1;
     }
 
     .stat-label {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
       color: var(--text-dim);
+      margin-top: 0.35rem;
     }
 
-    /* Chat Panel */
-    .chat-panel {
+    /* Bulletin Board (Learnings) */
+    .bulletin-board {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+    }
+
+    .bulletin-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .bulletin-note {
+      background: var(--floor);
+      border-left: 3px solid var(--yellow);
+      padding: 0.75rem;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem;
+    }
+
+    .bulletin-note-tag {
+      font-size: 0.65rem;
+      color: var(--yellow);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Chat Panel (Communication Hub) */
+    .comm-hub {
       background: var(--card);
       border-left: 1px solid var(--border);
       display: flex;
@@ -192,247 +363,390 @@
       height: 100%;
     }
 
-    .chat-header {
-      padding: 1rem;
+    .comm-header {
+      padding: 1rem 1.25rem;
       border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .comm-avatar {
+      width: 36px;
+      height: 36px;
+      background: var(--floor);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .comm-info h3 {
+      font-size: 0.95rem;
       font-weight: 600;
     }
 
-    .chat-messages {
+    .comm-info span {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .comm-messages {
       flex: 1;
       overflow-y: auto;
       padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
 
     .message {
-      margin-bottom: 1rem;
-      max-width: 90%;
+      max-width: 85%;
+      animation: slideIn 0.3s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .message.user {
-      margin-left: auto;
-      text-align: right;
+      align-self: flex-end;
     }
 
-    .message-bubble {
-      display: inline-block;
+    .message-content {
       padding: 0.75rem 1rem;
-      border-radius: 12px;
+      border-radius: 16px;
       font-size: 0.9rem;
-      line-height: 1.4;
+      line-height: 1.5;
     }
 
-    .message.user .message-bubble {
+    .message.user .message-content {
       background: var(--accent);
       color: white;
+      border-bottom-right-radius: 4px;
     }
 
-    .message.assistant .message-bubble {
-      background: var(--border);
+    .message.assistant .message-content {
+      background: var(--floor);
+      border-bottom-left-radius: 4px;
     }
 
-    .message-agent {
-      font-size: 0.75rem;
+    .message-meta {
+      font-size: 0.7rem;
       color: var(--text-dim);
-      margin-bottom: 0.25rem;
+      margin-top: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
-    .chat-input {
+    .message.user .message-meta {
+      justify-content: flex-end;
+    }
+
+    .comm-input {
       padding: 1rem;
       border-top: 1px solid var(--border);
       display: flex;
       gap: 0.5rem;
     }
 
-    .chat-input input {
+    .comm-input input {
       flex: 1;
-      background: var(--bg);
+      background: var(--floor);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.75rem;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
       color: var(--text);
       font-size: 0.9rem;
+      transition: border-color 0.2s;
     }
 
-    .chat-input input:focus {
+    .comm-input input:focus {
       outline: none;
       border-color: var(--accent);
     }
 
-    .chat-input button {
+    .comm-input button {
       background: var(--accent);
       border: none;
-      border-radius: 6px;
-      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
       color: white;
       cursor: pointer;
-      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      transition: transform 0.2s;
     }
 
-    .chat-input button:disabled {
+    .comm-input button:hover {
+      transform: scale(1.05);
+    }
+
+    .comm-input button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      transform: none;
     }
 
-    /* Lists */
-    .list-item {
+    /* Launch Room View */
+    .launch-room {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .launch-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .launch-title {
       display: flex;
       align-items: center;
       gap: 0.75rem;
+    }
+
+    .launch-title h2 {
+      font-size: 1.25rem;
+    }
+
+    .launch-title span {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .launch-tabs {
+      display: flex;
+      gap: 0.25rem;
+      background: var(--card);
+      padding: 0.25rem;
+      border-radius: 10px;
+    }
+
+    .launch-tab {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .launch-tab:hover { color: var(--text); }
+    .launch-tab.active {
+      background: var(--floor);
+      color: var(--text);
+    }
+
+    /* Kanban-style Pipeline */
+    .pipeline {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .pipeline-column {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1rem;
+      min-height: 300px;
+    }
+
+    .pipeline-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .pipeline-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .pipeline-count {
+      font-size: 0.7rem;
+      background: var(--floor);
+      padding: 0.2rem 0.5rem;
+      border-radius: 10px;
+      color: var(--text-dim);
+    }
+
+    .pipeline-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .pipeline-card {
+      background: var(--floor);
+      border-radius: 8px;
       padding: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .pipeline-card:hover {
+      border-color: var(--border);
+      transform: translateX(4px);
+    }
+
+    .pipeline-card-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .pipeline-card-meta {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    /* Milestones Track */
+    .milestones-track {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .milestone-progress {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .milestone-bar {
+      flex: 1;
+      height: 8px;
+      background: var(--floor);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .milestone-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--cyan));
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .milestone-percent {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      min-width: 45px;
+    }
+
+    .milestones-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .milestone-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .milestone-item:hover {
+      background: var(--floor);
+    }
+
+    .milestone-check {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--border);
       border-radius: 6px;
-      margin-bottom: 0.5rem;
-      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      transition: all 0.2s;
     }
 
-    .list-item:hover {
-      background: var(--border);
+    .milestone-item.completed .milestone-check {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
     }
 
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
+    .milestone-item.in-progress .milestone-check {
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
-    .status-dot.pending { background: var(--yellow); }
-    .status-dot.in_progress, .status-dot.in-progress { background: var(--accent); }
-    .status-dot.completed { background: var(--green); }
-    .status-dot.not_contacted, .status-dot.not-contacted { background: var(--text-dim); }
-    .status-dot.contacted { background: var(--yellow); }
-    .status-dot.responded { background: var(--cyan); }
-    .status-dot.interested { background: var(--purple); }
-    .status-dot.converted { background: var(--green); }
-    .status-dot.not_interested, .status-dot.not-interested { background: var(--red); }
+    .milestone-text {
+      flex: 1;
+      font-size: 0.85rem;
+    }
 
-    .list-item-content { flex: 1; }
-    .list-item-title { font-weight: 500; }
-    .list-item-meta { font-size: 0.75rem; color: var(--text-dim); }
+    .milestone-item.completed .milestone-text {
+      color: var(--text-dim);
+      text-decoration: line-through;
+    }
 
-    /* Forms */
-    .form-row {
+    /* Quick Add Forms */
+    .quick-add {
       display: flex;
       gap: 0.5rem;
       margin-bottom: 1rem;
     }
 
-    .form-input {
-      flex: 1;
-      background: var(--bg);
+    .quick-add input, .quick-add select {
+      background: var(--floor);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
       color: var(--text);
-      font-size: 0.9rem;
-    }
-
-    .form-select {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.5rem 0.75rem;
-      color: var(--text);
-      font-size: 0.9rem;
-    }
-
-    .btn {
-      background: var(--accent);
-      border: none;
-      border-radius: 6px;
-      padding: 0.5rem 1rem;
-      color: white;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
-    .btn-small {
-      padding: 0.25rem 0.5rem;
-      font-size: 0.75rem;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-
-    .btn-outline:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    /* Progress Bar */
-    .progress-bar {
-      height: 8px;
-      background: var(--border);
-      border-radius: 4px;
-      overflow: hidden;
-      margin-top: 0.5rem;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      transition: width 0.3s;
-    }
-
-    /* Tabs */
-    .tabs {
-      display: flex;
-      gap: 0.25rem;
-      margin-bottom: 1rem;
-      background: var(--bg);
-      padding: 0.25rem;
-      border-radius: 6px;
-    }
-
-    .tab {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      padding: 0.5rem;
-      border-radius: 4px;
-      cursor: pointer;
       font-size: 0.85rem;
     }
 
-    .tab.active {
-      background: var(--card);
-      color: var(--text);
+    .quick-add input { flex: 1; }
+    .quick-add input:focus, .quick-add select:focus {
+      outline: none;
+      border-color: var(--accent);
     }
 
-    /* Hidden */
-    .hidden { display: none !important; }
-
-    /* Learning cards */
-    .learning-card {
-      background: var(--bg);
-      border-left: 3px solid var(--yellow);
-      padding: 0.75rem;
-      margin-bottom: 0.5rem;
-      border-radius: 0 6px 6px 0;
-    }
-
-    .learning-category {
-      font-size: 0.7rem;
-      color: var(--yellow);
-      text-transform: uppercase;
-      margin-bottom: 0.25rem;
-    }
-
-    .learning-content {
-      font-size: 0.9rem;
+    .quick-add button {
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      color: white;
+      cursor: pointer;
+      font-size: 0.85rem;
+      white-space: nowrap;
     }
 
     /* Modal */
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.7);
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -441,219 +755,254 @@
 
     .modal {
       background: var(--card);
-      border-radius: 12px;
+      border-radius: 16px;
       padding: 1.5rem;
       width: 90%;
-      max-width: 500px;
+      max-width: 400px;
+      border: 1px solid var(--border);
     }
 
-    .modal-title {
-      font-size: 1.2rem;
-      font-weight: 600;
+    .modal h3 {
       margin-bottom: 1rem;
+    }
+
+    .modal-field {
+      margin-bottom: 1rem;
+    }
+
+    .modal-field label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-bottom: 0.35rem;
+    }
+
+    .modal-field input, .modal-field select {
+      width: 100%;
+      background: var(--floor);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 0.75rem;
+      color: var(--text);
+      font-size: 0.9rem;
     }
 
     .modal-actions {
       display: flex;
       gap: 0.5rem;
       justify-content: flex-end;
-      margin-top: 1rem;
+      margin-top: 1.25rem;
     }
 
-    /* Theme Toggle */
-    .theme-toggle {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 0.25rem;
-      display: flex;
-      align-items: center;
+    .btn {
+      padding: 0.6rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
       cursor: pointer;
-      width: 70px;
-      position: relative;
+      border: none;
     }
 
-    .theme-toggle-track {
-      width: 100%;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 6px;
-    }
-
-    .theme-toggle-icon {
-      font-size: 14px;
-      z-index: 1;
-    }
-
-    .theme-toggle-thumb {
-      position: absolute;
-      width: 24px;
-      height: 24px;
+    .btn-primary {
       background: var(--accent);
-      border-radius: 50%;
-      transition: transform 0.3s ease;
-      left: 3px;
+      color: white;
     }
 
-    [data-theme="light"] .theme-toggle-thumb {
-      transform: translateX(38px);
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-dim);
+      border: 1px solid var(--border);
     }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
+    .btn-ghost:hover {
+      color: var(--text);
+      border-color: var(--text-dim);
     }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
-  <header>
+  <!-- Top Bar -->
+  <div class="topbar">
     <div class="logo">
-      <span>My Team</span> Office
+      <span class="logo-icon">🏢</span>
+      <span>My</span> Office
     </div>
-    <div class="header-right">
-      <nav>
-        <button class="active" onclick="showView('dashboard')">Dashboard</button>
-        <button onclick="showView('launch')">Launch Manager</button>
-      </nav>
-      <div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-        <div class="theme-toggle-track">
-          <span class="theme-toggle-icon">🌙</span>
-          <span class="theme-toggle-icon">☀️</span>
-        </div>
-        <div class="theme-toggle-thumb"></div>
-      </div>
+    <div class="topbar-center">
+      <button class="view-btn active" onclick="showView('office')">
+        <span>🏠</span> Office
+      </button>
+      <button class="view-btn" onclick="showView('launch')">
+        <span>🚀</span> Launch Room
+      </button>
     </div>
-  </header>
-
-  <main>
-    <!-- Dashboard View -->
-    <div id="dashboard-view" class="section">
-      <div class="section-title">Your Agent Team</div>
-      <div class="agents-grid" id="agents-grid"></div>
-
-      <div class="section-title">Tasks</div>
-      <div class="card">
-        <div id="tasks-list">
-          <p style="color: var(--text-dim)">No tasks yet. Chat with your team to create tasks.</p>
-        </div>
+    <div class="topbar-right">
+      <div class="status-indicator">
+        <div class="status-dot"></div>
+        <span>All systems online</span>
       </div>
-
-      <div class="section-title">Learned Preferences</div>
-      <div class="card">
-        <div id="preferences-list">
-          <p style="color: var(--text-dim)">No preferences learned yet.</p>
-        </div>
+      <div class="theme-toggle" onclick="toggleTheme()">
+        <div class="theme-toggle-thumb">🌙</div>
       </div>
     </div>
+  </div>
 
-    <!-- Launch Manager View -->
-    <div id="launch-view" class="section hidden">
-      <div class="section-title">🚀 LoanFlow Launch</div>
+  <!-- Main Office View -->
+  <div class="office" id="office-view">
+    <div class="office-floor">
+      <!-- Agent Desks -->
+      <div class="desks-area" id="desks-area"></div>
 
-      <div class="stats-row" id="launch-stats"></div>
-
-      <div class="tabs">
-        <button class="tab active" onclick="showLaunchTab('milestones')">Milestones</button>
-        <button class="tab" onclick="showLaunchTab('outreach')">Outreach</button>
-        <button class="tab" onclick="showLaunchTab('learnings')">Learnings</button>
-        <button class="tab" onclick="showLaunchTab('metrics')">Metrics</button>
-      </div>
-
-      <!-- Milestones Tab -->
-      <div id="milestones-tab" class="card">
-        <div class="form-row">
-          <input type="text" class="form-input" id="new-milestone" placeholder="Add milestone...">
-          <button class="btn" onclick="addMilestone()">Add</button>
+      <!-- Meeting Room Stats -->
+      <div class="meeting-room">
+        <div class="room-title">
+          <span>📊</span> Meeting Room - Today's Overview
         </div>
-        <div id="milestones-list"></div>
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Tasks</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Contacts</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Responses</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">0</div>
+            <div class="stat-label">Wins</div>
+          </div>
+        </div>
       </div>
 
-      <!-- Outreach Tab -->
-      <div id="outreach-tab" class="card hidden">
-        <div class="form-row">
-          <input type="text" class="form-input" id="contact-name" placeholder="Name">
-          <select class="form-select" id="contact-channel">
-            <option value="Facebook Group">Facebook Group</option>
+      <!-- Bulletin Board -->
+      <div class="bulletin-board">
+        <div class="room-title">
+          <span>📌</span> Bulletin Board - Recent Learnings
+        </div>
+        <div class="bulletin-items" id="bulletin-items">
+          <div class="bulletin-note">
+            <div class="bulletin-note-tag">Tip</div>
+            Chat with your team to get started. Click on any desk to talk directly to that agent.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Communication Hub -->
+    <div class="comm-hub">
+      <div class="comm-header">
+        <div class="comm-avatar" id="comm-avatar">🎯</div>
+        <div class="comm-info">
+          <h3 id="comm-name">Orchestrator</h3>
+          <span id="comm-role">Team Coordinator</span>
+        </div>
+      </div>
+      <div class="comm-messages" id="comm-messages">
+        <div class="message assistant">
+          <div class="message-content">Hey! Welcome to the office. I'm your team coordinator - tell me what you need and I'll connect you with the right person.</div>
+          <div class="message-meta">
+            <span>🎯</span> Orchestrator • Just now
+          </div>
+        </div>
+      </div>
+      <div class="comm-input">
+        <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()" id="send-btn">➤</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Launch Room View -->
+  <div class="office hidden" id="launch-view" style="grid-template-columns: 1fr;">
+    <div class="launch-room">
+      <div class="launch-header">
+        <div class="launch-title">
+          <h2>🚀 LoanFlow Launch</h2>
+          <span>loanflow.pages.dev</span>
+        </div>
+        <div class="launch-tabs">
+          <button class="launch-tab active" onclick="showLaunchTab('pipeline')">Pipeline</button>
+          <button class="launch-tab" onclick="showLaunchTab('milestones')">Milestones</button>
+          <button class="launch-tab" onclick="showLaunchTab('learnings')">Learnings</button>
+        </div>
+      </div>
+
+      <!-- Pipeline Tab -->
+      <div id="pipeline-tab">
+        <div class="quick-add">
+          <input type="text" id="contact-name" placeholder="Contact name...">
+          <select id="contact-channel">
+            <option value="Facebook Group">Facebook</option>
             <option value="Reddit">Reddit</option>
             <option value="Email">Email</option>
             <option value="LinkedIn">LinkedIn</option>
             <option value="Referral">Referral</option>
           </select>
-          <button class="btn" onclick="addContact()">Add</button>
+          <button onclick="addContact()">+ Add Contact</button>
         </div>
-        <div id="outreach-list"></div>
+        <div class="pipeline" id="pipeline"></div>
+      </div>
+
+      <!-- Milestones Tab -->
+      <div id="milestones-tab" class="hidden">
+        <div class="milestones-track">
+          <div class="milestone-progress">
+            <div class="milestone-bar">
+              <div class="milestone-fill" id="milestone-fill" style="width: 0%"></div>
+            </div>
+            <div class="milestone-percent" id="milestone-percent">0%</div>
+          </div>
+          <div class="quick-add">
+            <input type="text" id="new-milestone" placeholder="Add a milestone...">
+            <button onclick="addMilestone()">+ Add</button>
+          </div>
+          <div class="milestones-list" id="milestones-list"></div>
+        </div>
       </div>
 
       <!-- Learnings Tab -->
-      <div id="learnings-tab" class="card hidden">
-        <div class="form-row">
-          <select class="form-select" id="learning-category">
+      <div id="learnings-tab" class="hidden">
+        <div class="quick-add">
+          <select id="learning-category">
             <option value="User Feedback">User Feedback</option>
             <option value="Market Insight">Market Insight</option>
-            <option value="Channel Performance">Channel Performance</option>
+            <option value="Channel Performance">Channel</option>
             <option value="Product Idea">Product Idea</option>
-            <option value="Competitor">Competitor</option>
           </select>
-          <input type="text" class="form-input" id="learning-content" placeholder="What did you learn?">
-          <button class="btn" onclick="addLearning()">Add</button>
+          <input type="text" id="learning-content" placeholder="What did you learn?">
+          <button onclick="addLearning()">+ Add</button>
         </div>
-        <div id="learnings-list"></div>
-      </div>
-
-      <!-- Metrics Tab -->
-      <div id="metrics-tab" class="card hidden">
-        <div class="form-row">
-          <select class="form-select" id="metric-name">
-            <option value="Weekly Active Users">Weekly Active Users</option>
-            <option value="Signups">Signups</option>
-            <option value="Paying Customers">Paying Customers</option>
-            <option value="MRR">MRR ($)</option>
-            <option value="Demo Calls">Demo Calls</option>
-          </select>
-          <input type="number" class="form-input" id="metric-value" placeholder="Value">
-          <button class="btn" onclick="recordMetric()">Record</button>
-        </div>
-        <div id="metrics-list"></div>
+        <div class="bulletin-items" id="learnings-list"></div>
       </div>
     </div>
+  </div>
 
-    <!-- Chat Panel -->
-    <div class="chat-panel">
-      <div class="chat-header">
-        <span id="chat-agent-name">Chat with Orchestrator</span>
-      </div>
-      <div class="chat-messages" id="chat-messages">
-        <div class="message assistant">
-          <div class="message-agent">🎯 Orchestrator</div>
-          <div class="message-bubble">Hi! I'm your team coordinator. How can I help you today?</div>
-        </div>
-      </div>
-      <div class="chat-input">
-        <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
-        <button onclick="sendMessage()" id="send-btn">Send</button>
-      </div>
-    </div>
-  </main>
-
-  <!-- Status Update Modal -->
-  <div id="status-modal" class="modal-overlay hidden">
+  <!-- Contact Modal -->
+  <div id="contact-modal" class="modal-overlay hidden">
     <div class="modal">
-      <div class="modal-title">Update Status</div>
-      <select class="form-select" id="status-select" style="width: 100%">
-        <option value="not_contacted">Not Contacted</option>
-        <option value="contacted">Contacted</option>
-        <option value="responded">Responded</option>
-        <option value="interested">Interested</option>
-        <option value="converted">Converted</option>
-        <option value="not_interested">Not Interested</option>
-      </select>
-      <input type="text" class="form-input" id="status-notes" placeholder="Notes (optional)" style="width: 100%; margin-top: 0.5rem">
+      <h3>Update Contact</h3>
+      <div class="modal-field">
+        <label>Status</label>
+        <select id="modal-status">
+          <option value="not_contacted">Not Contacted</option>
+          <option value="contacted">Contacted</option>
+          <option value="responded">Responded</option>
+          <option value="interested">Interested</option>
+          <option value="converted">Converted!</option>
+          <option value="not_interested">Not Interested</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Notes</label>
+        <input type="text" id="modal-notes" placeholder="Any notes...">
+      </div>
       <div class="modal-actions">
-        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-        <button class="btn" onclick="saveStatus()">Save</button>
+        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveContact()">Save</button>
       </div>
     </div>
   </div>
@@ -664,61 +1013,73 @@
     let currentContactId = null;
 
     const agents = [
-      { role: 'orchestrator', name: 'Orchestrator', icon: '🎯', description: 'Routes tasks, learns preferences' },
-      { role: 'dev', name: 'Dev', icon: '💻', description: 'Code, debug, architecture' },
-      { role: 'research', name: 'Research', icon: '🔍', description: 'Find and synthesize info' },
-      { role: 'comms', name: 'Comms', icon: '✉️', description: 'Emails, docs, reports' },
-      { role: 'workflow', name: 'Workflow', icon: '⚡', description: 'Tasks, automation' }
+      { role: 'orchestrator', name: 'Orchestrator', icon: '🎯', title: 'Team Coordinator', color: '#3b82f6',
+        skills: ['Task routing', 'Preferences', 'Coordination'] },
+      { role: 'dev', name: 'Dev', icon: '💻', title: 'Software Engineer', color: '#22c55e',
+        skills: ['Coding', 'Debugging', 'Architecture'] },
+      { role: 'research', name: 'Research', icon: '🔍', title: 'Research Analyst', color: '#eab308',
+        skills: ['Web research', 'Summaries', 'Analysis'] },
+      { role: 'comms', name: 'Comms', icon: '✉️', title: 'Communications Lead', color: '#a855f7',
+        skills: ['Emails', 'Docs', 'Reports'] },
+      { role: 'workflow', name: 'Workflow', icon: '⚡', title: 'Operations Manager', color: '#06b6d4',
+        skills: ['Tasks', 'Automation', 'Workflows'] }
     ];
 
     // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       loadTheme();
-      renderAgents();
-      loadDashboard();
+      renderDesks();
+      loadStats();
       loadLaunchData();
     });
 
-    // Theme Toggle
+    // Theme
     function toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-      document.documentElement.setAttribute('data-theme', newTheme);
-      localStorage.setItem('theme', newTheme);
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      document.querySelector('.theme-toggle-thumb').textContent = next === 'light' ? '☀️' : '🌙';
     }
 
     function loadTheme() {
-      const savedTheme = localStorage.getItem('theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', savedTheme);
+      const saved = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', saved);
+      document.querySelector('.theme-toggle-thumb').textContent = saved === 'light' ? '☀️' : '🌙';
     }
 
-    // Navigation
+    // Views
     function showView(view) {
-      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-
-      document.getElementById('dashboard-view').classList.toggle('hidden', view !== 'dashboard');
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      event.target.closest('.view-btn').classList.add('active');
+      document.getElementById('office-view').classList.toggle('hidden', view !== 'office');
       document.getElementById('launch-view').classList.toggle('hidden', view !== 'launch');
     }
 
     function showLaunchTab(tab) {
-      document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.launch-tab').forEach(t => t.classList.remove('active'));
       event.target.classList.add('active');
-
-      ['milestones', 'outreach', 'learnings', 'metrics'].forEach(t => {
+      ['pipeline', 'milestones', 'learnings'].forEach(t => {
         document.getElementById(t + '-tab').classList.toggle('hidden', t !== tab);
       });
     }
 
-    // Render agents
-    function renderAgents() {
-      const grid = document.getElementById('agents-grid');
-      grid.innerHTML = agents.map(a => `
-        <div class="agent-card ${a.role === currentAgent ? 'selected' : ''}" onclick="selectAgent('${a.role}')">
-          <div class="agent-icon">${a.icon}</div>
-          <div class="agent-name">${a.name}</div>
-          <div class="agent-desc">${a.description}</div>
-          <div class="agent-status">● Ready</div>
+    // Render Desks
+    function renderDesks() {
+      const area = document.getElementById('desks-area');
+      area.innerHTML = agents.map(a => `
+        <div class="desk ${a.role === currentAgent ? 'active' : ''}"
+             style="--desk-color: ${a.color}"
+             onclick="selectAgent('${a.role}')">
+          <div class="desk-header">
+            <div class="desk-avatar">${a.icon}</div>
+            <div class="desk-status">Online</div>
+          </div>
+          <div class="desk-name">${a.name}</div>
+          <div class="desk-role">${a.title}</div>
+          <div class="desk-skills">
+            ${a.skills.map(s => `<span class="skill-tag">${s}</span>`).join('')}
+          </div>
         </div>
       `).join('');
     }
@@ -726,45 +1087,47 @@
     function selectAgent(role) {
       currentAgent = role;
       const agent = agents.find(a => a.role === role);
-      document.getElementById('chat-agent-name').textContent = `Chat with ${agent.name}`;
-      renderAgents();
+      document.getElementById('comm-avatar').textContent = agent.icon;
+      document.getElementById('comm-name').textContent = agent.name;
+      document.getElementById('comm-role').textContent = agent.title;
+      renderDesks();
     }
 
-    // Dashboard
-    async function loadDashboard() {
+    // Load Stats
+    async function loadStats() {
       try {
-        const [tasks, prefs] = await Promise.all([
-          fetch(API + '/api/tasks').then(r => r.json()),
-          fetch(API + '/api/preferences').then(r => r.json())
-        ]);
-
-        const tasksList = document.getElementById('tasks-list');
-        if (tasks.length > 0) {
-          tasksList.innerHTML = tasks.map(t => `
-            <div class="list-item">
-              <div class="status-dot ${t.status}"></div>
-              <div class="list-item-content">
-                <div class="list-item-title">${t.description}</div>
-                <div class="list-item-meta">${t.assignedTo ? '@' + t.assignedTo : ''}</div>
-              </div>
+        const summary = await fetch(API + '/api/launch/summary').then(r => r.json());
+        if (summary) {
+          document.getElementById('stats-grid').innerHTML = `
+            <div class="stat-item">
+              <div class="stat-value">${summary.milestones.completed}/${summary.milestones.total}</div>
+              <div class="stat-label">Milestones</div>
             </div>
-          `).join('');
-        }
-
-        const prefsList = document.getElementById('preferences-list');
-        if (prefs.length > 0) {
-          prefsList.innerHTML = prefs.map(p => `
-            <div class="list-item">
-              <div class="list-item-content">
-                <div class="list-item-title">${p.key}</div>
-                <div class="list-item-meta">${p.value}</div>
-              </div>
+            <div class="stat-item">
+              <div class="stat-value">${summary.outreach.total}</div>
+              <div class="stat-label">Contacts</div>
             </div>
-          `).join('');
+            <div class="stat-item">
+              <div class="stat-value">${summary.outreach.responded}</div>
+              <div class="stat-label">Responses</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${summary.outreach.converted}</div>
+              <div class="stat-label">Wins</div>
+            </div>
+          `;
+
+          // Update bulletin
+          if (summary.learnings.length > 0) {
+            document.getElementById('bulletin-items').innerHTML = summary.learnings.slice(0, 3).map(l => `
+              <div class="bulletin-note">
+                <div class="bulletin-note-tag">${l.category}</div>
+                ${l.content}
+              </div>
+            `).join('');
+          }
         }
-      } catch (e) {
-        console.error('Error loading dashboard:', e);
-      }
+      } catch (e) {}
     }
 
     // Chat
@@ -773,13 +1136,14 @@
       const message = input.value.trim();
       if (!message) return;
 
-      const messagesDiv = document.getElementById('chat-messages');
+      const messagesDiv = document.getElementById('comm-messages');
       const sendBtn = document.getElementById('send-btn');
+      const agent = agents.find(a => a.role === currentAgent);
 
-      // Add user message
       messagesDiv.innerHTML += `
         <div class="message user">
-          <div class="message-bubble">${escapeHtml(message)}</div>
+          <div class="message-content">${escapeHtml(message)}</div>
+          <div class="message-meta">You • Just now</div>
         </div>
       `;
 
@@ -795,21 +1159,20 @@
         });
 
         const data = await response.json();
-        const agent = agents.find(a => a.role === data.agent);
-
         messagesDiv.innerHTML += `
           <div class="message assistant">
-            <div class="message-agent">${agent.icon} ${agent.name}</div>
-            <div class="message-bubble">${escapeHtml(data.content)}</div>
+            <div class="message-content">${escapeHtml(data.content)}</div>
+            <div class="message-meta">
+              <span>${agent.icon}</span> ${agent.name} • Just now
+            </div>
           </div>
         `;
-
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        loadDashboard(); // Refresh in case tasks/prefs changed
+        loadStats();
       } catch (e) {
         messagesDiv.innerHTML += `
           <div class="message assistant">
-            <div class="message-bubble" style="color: var(--red)">Error: ${e.message}</div>
+            <div class="message-content" style="color: var(--red)">Connection error. Please try again.</div>
           </div>
         `;
       }
@@ -821,110 +1184,68 @@
       if (e.key === 'Enter') sendMessage();
     }
 
-    // Launch Manager
+    // Launch Data
     async function loadLaunchData() {
       try {
         const summary = await fetch(API + '/api/launch/summary').then(r => r.json());
         if (!summary) return;
 
-        // Stats
-        document.getElementById('launch-stats').innerHTML = `
-          <div class="stat-card">
-            <div class="stat-value">${summary.milestones.completed}/${summary.milestones.total}</div>
-            <div class="stat-label">Milestones</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">${summary.outreach.total}</div>
-            <div class="stat-label">Contacts</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">${summary.outreach.responded}</div>
-            <div class="stat-label">Responded</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-value">${summary.outreach.converted}</div>
-            <div class="stat-label">Converted</div>
-          </div>
-        `;
+        // Pipeline
+        const stages = {
+          not_contacted: { title: '📋 To Contact', items: [] },
+          contacted: { title: '📤 Contacted', items: [] },
+          responded: { title: '💬 Responded', items: [] },
+          converted: { title: '🎉 Won', items: [] }
+        };
 
-        // Milestones
-        document.getElementById('milestones-list').innerHTML = summary.milestones.items.map(m => `
-          <div class="list-item">
-            <div class="status-dot ${m.status.replace('_', '-')}"></div>
-            <div class="list-item-content">
-              <div class="list-item-title">${m.title}</div>
+        summary.outreach.items.forEach(c => {
+          const stage = c.status === 'interested' ? 'responded' :
+                       c.status === 'not_interested' ? 'contacted' : c.status;
+          if (stages[stage]) stages[stage].items.push(c);
+        });
+
+        document.getElementById('pipeline').innerHTML = Object.entries(stages).map(([key, stage]) => `
+          <div class="pipeline-column">
+            <div class="pipeline-header">
+              <div class="pipeline-title">${stage.title}</div>
+              <div class="pipeline-count">${stage.items.length}</div>
             </div>
-            <select class="form-select" style="width: auto" onchange="updateMilestone(${m.id}, this.value)">
-              <option value="pending" ${m.status === 'pending' ? 'selected' : ''}>Pending</option>
-              <option value="in_progress" ${m.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
-              <option value="completed" ${m.status === 'completed' ? 'selected' : ''}>Completed</option>
-            </select>
+            <div class="pipeline-cards">
+              ${stage.items.map(c => `
+                <div class="pipeline-card" onclick="openModal(${c.id}, '${c.status}', '${escapeHtml(c.notes || '')}')">
+                  <div class="pipeline-card-name">${c.name}</div>
+                  <div class="pipeline-card-meta">${c.channel}</div>
+                </div>
+              `).join('')}
+            </div>
           </div>
         `).join('');
 
-        // Outreach
-        document.getElementById('outreach-list').innerHTML = summary.outreach.items.length > 0
-          ? summary.outreach.items.map(c => `
-            <div class="list-item">
-              <div class="status-dot ${c.status.replace('_', '-')}"></div>
-              <div class="list-item-content" onclick="openStatusModal(${c.id}, '${c.status}', '${escapeHtml(c.notes || '')}')" style="cursor: pointer">
-                <div class="list-item-title">${c.name}</div>
-                <div class="list-item-meta">${c.channel} • ${c.status.replace('_', ' ')}</div>
-              </div>
-              <button class="btn btn-small btn-outline" onclick="deleteContact(${c.id})">×</button>
-            </div>
-          `).join('')
-          : '<p style="color: var(--text-dim); padding: 1rem;">No contacts yet. Add your first outreach contact above.</p>';
+        // Milestones
+        const completed = summary.milestones.items.filter(m => m.status === 'completed').length;
+        const percent = summary.milestones.total > 0 ? Math.round((completed / summary.milestones.total) * 100) : 0;
+        document.getElementById('milestone-fill').style.width = percent + '%';
+        document.getElementById('milestone-percent').textContent = percent + '%';
+
+        document.getElementById('milestones-list').innerHTML = summary.milestones.items.map(m => `
+          <div class="milestone-item ${m.status === 'completed' ? 'completed' : m.status === 'in_progress' ? 'in-progress' : ''}"
+               onclick="cycleMilestone(${m.id}, '${m.status}')">
+            <div class="milestone-check">${m.status === 'completed' ? '✓' : m.status === 'in_progress' ? '◐' : ''}</div>
+            <div class="milestone-text">${m.title}</div>
+          </div>
+        `).join('');
 
         // Learnings
-        document.getElementById('learnings-list').innerHTML = summary.learnings.length > 0
-          ? summary.learnings.map(l => `
-            <div class="learning-card">
-              <div class="learning-category">${l.category}</div>
-              <div class="learning-content">${l.content}</div>
-            </div>
-          `).join('')
-          : '<p style="color: var(--text-dim);">No learnings yet.</p>';
-
-        // Metrics
-        document.getElementById('metrics-list').innerHTML = summary.metrics.length > 0
-          ? summary.metrics.map(m => `
-            <div class="list-item">
-              <div class="list-item-content">
-                <div class="list-item-title">${m.metric_name}</div>
-              </div>
-              <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent)">${m.value}</div>
-            </div>
-          `).join('')
-          : '<p style="color: var(--text-dim);">No metrics recorded yet.</p>';
+        document.getElementById('learnings-list').innerHTML = summary.learnings.map(l => `
+          <div class="bulletin-note">
+            <div class="bulletin-note-tag">${l.category}</div>
+            ${l.content}
+          </div>
+        `).join('') || '<p style="color: var(--text-dim);">No learnings yet.</p>';
 
       } catch (e) {
-        console.error('Error loading launch data:', e);
+        console.error(e);
       }
-    }
-
-    async function addMilestone() {
-      const input = document.getElementById('new-milestone');
-      const title = input.value.trim();
-      if (!title) return;
-
-      await fetch(API + '/api/launch/milestones', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title })
-      });
-
-      input.value = '';
-      loadLaunchData();
-    }
-
-    async function updateMilestone(id, status) {
-      await fetch(API + `/api/launch/milestones/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
-      });
-      loadLaunchData();
     }
 
     async function addContact() {
@@ -940,29 +1261,24 @@
 
       document.getElementById('contact-name').value = '';
       loadLaunchData();
+      loadStats();
     }
 
-    async function deleteContact(id) {
-      if (!confirm('Delete this contact?')) return;
-      await fetch(API + `/api/launch/outreach/${id}`, { method: 'DELETE' });
-      loadLaunchData();
-    }
-
-    function openStatusModal(id, status, notes) {
+    function openModal(id, status, notes) {
       currentContactId = id;
-      document.getElementById('status-select').value = status;
-      document.getElementById('status-notes').value = notes;
-      document.getElementById('status-modal').classList.remove('hidden');
+      document.getElementById('modal-status').value = status;
+      document.getElementById('modal-notes').value = notes;
+      document.getElementById('contact-modal').classList.remove('hidden');
     }
 
     function closeModal() {
-      document.getElementById('status-modal').classList.add('hidden');
+      document.getElementById('contact-modal').classList.add('hidden');
       currentContactId = null;
     }
 
-    async function saveStatus() {
-      const status = document.getElementById('status-select').value;
-      const notes = document.getElementById('status-notes').value;
+    async function saveContact() {
+      const status = document.getElementById('modal-status').value;
+      const notes = document.getElementById('modal-notes').value;
 
       await fetch(API + `/api/launch/outreach/${currentContactId}`, {
         method: 'PUT',
@@ -972,6 +1288,37 @@
 
       closeModal();
       loadLaunchData();
+      loadStats();
+    }
+
+    async function addMilestone() {
+      const input = document.getElementById('new-milestone');
+      const title = input.value.trim();
+      if (!title) return;
+
+      await fetch(API + '/api/launch/milestones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title })
+      });
+
+      input.value = '';
+      loadLaunchData();
+      loadStats();
+    }
+
+    async function cycleMilestone(id, currentStatus) {
+      const next = currentStatus === 'pending' ? 'in_progress' :
+                   currentStatus === 'in_progress' ? 'completed' : 'pending';
+
+      await fetch(API + `/api/launch/milestones/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: next })
+      });
+
+      loadLaunchData();
+      loadStats();
     }
 
     async function addLearning() {
@@ -987,21 +1334,7 @@
 
       document.getElementById('learning-content').value = '';
       loadLaunchData();
-    }
-
-    async function recordMetric() {
-      const metric_name = document.getElementById('metric-name').value;
-      const value = parseInt(document.getElementById('metric-value').value);
-      if (isNaN(value)) return;
-
-      await fetch(API + '/api/launch/metrics', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ metric_name, value })
-      });
-
-      document.getElementById('metric-value').value = '';
-      loadLaunchData();
+      loadStats();
     }
 
     function escapeHtml(text) {
