@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Team Office</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Dark Theme (default) */
+    :root {
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #e0e0e0;
+      --text-dim: #888;
+      --accent: #3b82f6;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --purple: #a855f7;
+      --cyan: #06b6d4;
+      --shadow: rgba(0,0,0,0.3);
+    }
+
+    /* Light Theme */
+    [data-theme="light"] {
+      --bg: #f5f5f5;
+      --card: #ffffff;
+      --border: #e0e0e0;
+      --text: #1a1a1a;
+      --text-dim: #666;
+      --accent: #2563eb;
+      --green: #16a34a;
+      --yellow: #ca8a04;
+      --red: #dc2626;
+      --purple: #9333ea;
+      --cyan: #0891b2;
+      --shadow: rgba(0,0,0,0.1);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo span { color: var(--accent); }
+
+    /* Navigation */
+    nav {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    nav button {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    nav button:hover, nav button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* Main Layout */
+    main {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      height: calc(100vh - 60px);
+    }
+
+    /* Sections */
+    .section {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Agent Grid */
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .agent-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .agent-card:hover, .agent-card.selected {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .agent-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .agent-name { font-weight: 600; margin-bottom: 0.25rem; }
+    .agent-desc { font-size: 0.75rem; color: var(--text-dim); }
+    .agent-status {
+      font-size: 0.7rem;
+      color: var(--green);
+      margin-top: 0.5rem;
+    }
+
+    /* Stats Row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    /* Chat Panel */
+    .chat-panel {
+      background: var(--card);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .chat-header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+      font-weight: 600;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+    }
+
+    .message {
+      margin-bottom: 1rem;
+      max-width: 90%;
+    }
+
+    .message.user {
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .message-bubble {
+      display: inline-block;
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+    }
+
+    .message.user .message-bubble {
+      background: var(--accent);
+      color: white;
+    }
+
+    .message.assistant .message-bubble {
+      background: var(--border);
+    }
+
+    .message-agent {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-bottom: 0.25rem;
+    }
+
+    .chat-input {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .chat-input input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .chat-input input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .chat-input button {
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      padding: 0.75rem 1.5rem;
+      color: white;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .chat-input button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Lists */
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 6px;
+      margin-bottom: 0.5rem;
+      background: var(--bg);
+    }
+
+    .list-item:hover {
+      background: var(--border);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .status-dot.pending { background: var(--yellow); }
+    .status-dot.in_progress, .status-dot.in-progress { background: var(--accent); }
+    .status-dot.completed { background: var(--green); }
+    .status-dot.not_contacted, .status-dot.not-contacted { background: var(--text-dim); }
+    .status-dot.contacted { background: var(--yellow); }
+    .status-dot.responded { background: var(--cyan); }
+    .status-dot.interested { background: var(--purple); }
+    .status-dot.converted { background: var(--green); }
+    .status-dot.not_interested, .status-dot.not-interested { background: var(--red); }
+
+    .list-item-content { flex: 1; }
+    .list-item-title { font-weight: 500; }
+    .list-item-meta { font-size: 0.75rem; color: var(--text-dim); }
+
+    /* Forms */
+    .form-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .form-select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .btn {
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      padding: 0.5rem 1rem;
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .btn-small {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      transition: width 0.3s;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+      background: var(--bg);
+      padding: 0.25rem;
+      border-radius: 6px;
+    }
+
+    .tab {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      padding: 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .tab.active {
+      background: var(--card);
+      color: var(--text);
+    }
+
+    /* Hidden */
+    .hidden { display: none !important; }
+
+    /* Learning cards */
+    .learning-card {
+      background: var(--bg);
+      border-left: 3px solid var(--yellow);
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0 6px 6px 0;
+    }
+
+    .learning-category {
+      font-size: 0.7rem;
+      color: var(--yellow);
+      text-transform: uppercase;
+      margin-bottom: 0.25rem;
+    }
+
+    .learning-content {
+      font-size: 0.9rem;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      width: 90%;
+      max-width: 500px;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 0.25rem;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      width: 70px;
+      position: relative;
+    }
+
+    .theme-toggle-track {
+      width: 100%;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6px;
+    }
+
+    .theme-toggle-icon {
+      font-size: 14px;
+      z-index: 1;
+    }
+
+    .theme-toggle-thumb {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      left: 3px;
+    }
+
+    [data-theme="light"] .theme-toggle-thumb {
+      transform: translateX(38px);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span>My Team</span> Office
+    </div>
+    <div class="header-right">
+      <nav>
+        <button class="active" onclick="showView('dashboard')">Dashboard</button>
+        <button onclick="showView('launch')">Launch Manager</button>
+      </nav>
+      <div class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+        <div class="theme-toggle-track">
+          <span class="theme-toggle-icon">🌙</span>
+          <span class="theme-toggle-icon">☀️</span>
+        </div>
+        <div class="theme-toggle-thumb"></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Dashboard View -->
+    <div id="dashboard-view" class="section">
+      <div class="section-title">Your Agent Team</div>
+      <div class="agents-grid" id="agents-grid"></div>
+
+      <div class="section-title">Tasks</div>
+      <div class="card">
+        <div id="tasks-list">
+          <p style="color: var(--text-dim)">No tasks yet. Chat with your team to create tasks.</p>
+        </div>
+      </div>
+
+      <div class="section-title">Learned Preferences</div>
+      <div class="card">
+        <div id="preferences-list">
+          <p style="color: var(--text-dim)">No preferences learned yet.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Launch Manager View -->
+    <div id="launch-view" class="section hidden">
+      <div class="section-title">🚀 LoanFlow Launch</div>
+
+      <div class="stats-row" id="launch-stats"></div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="showLaunchTab('milestones')">Milestones</button>
+        <button class="tab" onclick="showLaunchTab('outreach')">Outreach</button>
+        <button class="tab" onclick="showLaunchTab('learnings')">Learnings</button>
+        <button class="tab" onclick="showLaunchTab('metrics')">Metrics</button>
+      </div>
+
+      <!-- Milestones Tab -->
+      <div id="milestones-tab" class="card">
+        <div class="form-row">
+          <input type="text" class="form-input" id="new-milestone" placeholder="Add milestone...">
+          <button class="btn" onclick="addMilestone()">Add</button>
+        </div>
+        <div id="milestones-list"></div>
+      </div>
+
+      <!-- Outreach Tab -->
+      <div id="outreach-tab" class="card hidden">
+        <div class="form-row">
+          <input type="text" class="form-input" id="contact-name" placeholder="Name">
+          <select class="form-select" id="contact-channel">
+            <option value="Facebook Group">Facebook Group</option>
+            <option value="Reddit">Reddit</option>
+            <option value="Email">Email</option>
+            <option value="LinkedIn">LinkedIn</option>
+            <option value="Referral">Referral</option>
+          </select>
+          <button class="btn" onclick="addContact()">Add</button>
+        </div>
+        <div id="outreach-list"></div>
+      </div>
+
+      <!-- Learnings Tab -->
+      <div id="learnings-tab" class="card hidden">
+        <div class="form-row">
+          <select class="form-select" id="learning-category">
+            <option value="User Feedback">User Feedback</option>
+            <option value="Market Insight">Market Insight</option>
+            <option value="Channel Performance">Channel Performance</option>
+            <option value="Product Idea">Product Idea</option>
+            <option value="Competitor">Competitor</option>
+          </select>
+          <input type="text" class="form-input" id="learning-content" placeholder="What did you learn?">
+          <button class="btn" onclick="addLearning()">Add</button>
+        </div>
+        <div id="learnings-list"></div>
+      </div>
+
+      <!-- Metrics Tab -->
+      <div id="metrics-tab" class="card hidden">
+        <div class="form-row">
+          <select class="form-select" id="metric-name">
+            <option value="Weekly Active Users">Weekly Active Users</option>
+            <option value="Signups">Signups</option>
+            <option value="Paying Customers">Paying Customers</option>
+            <option value="MRR">MRR ($)</option>
+            <option value="Demo Calls">Demo Calls</option>
+          </select>
+          <input type="number" class="form-input" id="metric-value" placeholder="Value">
+          <button class="btn" onclick="recordMetric()">Record</button>
+        </div>
+        <div id="metrics-list"></div>
+      </div>
+    </div>
+
+    <!-- Chat Panel -->
+    <div class="chat-panel">
+      <div class="chat-header">
+        <span id="chat-agent-name">Chat with Orchestrator</span>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="message assistant">
+          <div class="message-agent">🎯 Orchestrator</div>
+          <div class="message-bubble">Hi! I'm your team coordinator. How can I help you today?</div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()" id="send-btn">Send</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Status Update Modal -->
+  <div id="status-modal" class="modal-overlay hidden">
+    <div class="modal">
+      <div class="modal-title">Update Status</div>
+      <select class="form-select" id="status-select" style="width: 100%">
+        <option value="not_contacted">Not Contacted</option>
+        <option value="contacted">Contacted</option>
+        <option value="responded">Responded</option>
+        <option value="interested">Interested</option>
+        <option value="converted">Converted</option>
+        <option value="not_interested">Not Interested</option>
+      </select>
+      <input type="text" class="form-input" id="status-notes" placeholder="Notes (optional)" style="width: 100%; margin-top: 0.5rem">
+      <div class="modal-actions">
+        <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+        <button class="btn" onclick="saveStatus()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '';
+    let currentAgent = 'orchestrator';
+    let currentContactId = null;
+
+    const agents = [
+      { role: 'orchestrator', name: 'Orchestrator', icon: '🎯', description: 'Routes tasks, learns preferences' },
+      { role: 'dev', name: 'Dev', icon: '💻', description: 'Code, debug, architecture' },
+      { role: 'research', name: 'Research', icon: '🔍', description: 'Find and synthesize info' },
+      { role: 'comms', name: 'Comms', icon: '✉️', description: 'Emails, docs, reports' },
+      { role: 'workflow', name: 'Workflow', icon: '⚡', description: 'Tasks, automation' }
+    ];
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadTheme();
+      renderAgents();
+      loadDashboard();
+      loadLaunchData();
+    });
+
+    // Theme Toggle
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+    }
+
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    // Navigation
+    function showView(view) {
+      document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+
+      document.getElementById('dashboard-view').classList.toggle('hidden', view !== 'dashboard');
+      document.getElementById('launch-view').classList.toggle('hidden', view !== 'launch');
+    }
+
+    function showLaunchTab(tab) {
+      document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+
+      ['milestones', 'outreach', 'learnings', 'metrics'].forEach(t => {
+        document.getElementById(t + '-tab').classList.toggle('hidden', t !== tab);
+      });
+    }
+
+    // Render agents
+    function renderAgents() {
+      const grid = document.getElementById('agents-grid');
+      grid.innerHTML = agents.map(a => `
+        <div class="agent-card ${a.role === currentAgent ? 'selected' : ''}" onclick="selectAgent('${a.role}')">
+          <div class="agent-icon">${a.icon}</div>
+          <div class="agent-name">${a.name}</div>
+          <div class="agent-desc">${a.description}</div>
+          <div class="agent-status">● Ready</div>
+        </div>
+      `).join('');
+    }
+
+    function selectAgent(role) {
+      currentAgent = role;
+      const agent = agents.find(a => a.role === role);
+      document.getElementById('chat-agent-name').textContent = `Chat with ${agent.name}`;
+      renderAgents();
+    }
+
+    // Dashboard
+    async function loadDashboard() {
+      try {
+        const [tasks, prefs] = await Promise.all([
+          fetch(API + '/api/tasks').then(r => r.json()),
+          fetch(API + '/api/preferences').then(r => r.json())
+        ]);
+
+        const tasksList = document.getElementById('tasks-list');
+        if (tasks.length > 0) {
+          tasksList.innerHTML = tasks.map(t => `
+            <div class="list-item">
+              <div class="status-dot ${t.status}"></div>
+              <div class="list-item-content">
+                <div class="list-item-title">${t.description}</div>
+                <div class="list-item-meta">${t.assignedTo ? '@' + t.assignedTo : ''}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+
+        const prefsList = document.getElementById('preferences-list');
+        if (prefs.length > 0) {
+          prefsList.innerHTML = prefs.map(p => `
+            <div class="list-item">
+              <div class="list-item-content">
+                <div class="list-item-title">${p.key}</div>
+                <div class="list-item-meta">${p.value}</div>
+              </div>
+            </div>
+          `).join('');
+        }
+      } catch (e) {
+        console.error('Error loading dashboard:', e);
+      }
+    }
+
+    // Chat
+    async function sendMessage() {
+      const input = document.getElementById('message-input');
+      const message = input.value.trim();
+      if (!message) return;
+
+      const messagesDiv = document.getElementById('chat-messages');
+      const sendBtn = document.getElementById('send-btn');
+
+      // Add user message
+      messagesDiv.innerHTML += `
+        <div class="message user">
+          <div class="message-bubble">${escapeHtml(message)}</div>
+        </div>
+      `;
+
+      input.value = '';
+      sendBtn.disabled = true;
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+      try {
+        const response = await fetch(API + '/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message, agent: currentAgent })
+        });
+
+        const data = await response.json();
+        const agent = agents.find(a => a.role === data.agent);
+
+        messagesDiv.innerHTML += `
+          <div class="message assistant">
+            <div class="message-agent">${agent.icon} ${agent.name}</div>
+            <div class="message-bubble">${escapeHtml(data.content)}</div>
+          </div>
+        `;
+
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        loadDashboard(); // Refresh in case tasks/prefs changed
+      } catch (e) {
+        messagesDiv.innerHTML += `
+          <div class="message assistant">
+            <div class="message-bubble" style="color: var(--red)">Error: ${e.message}</div>
+          </div>
+        `;
+      }
+
+      sendBtn.disabled = false;
+    }
+
+    function handleKeyPress(e) {
+      if (e.key === 'Enter') sendMessage();
+    }
+
+    // Launch Manager
+    async function loadLaunchData() {
+      try {
+        const summary = await fetch(API + '/api/launch/summary').then(r => r.json());
+        if (!summary) return;
+
+        // Stats
+        document.getElementById('launch-stats').innerHTML = `
+          <div class="stat-card">
+            <div class="stat-value">${summary.milestones.completed}/${summary.milestones.total}</div>
+            <div class="stat-label">Milestones</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${summary.outreach.total}</div>
+            <div class="stat-label">Contacts</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${summary.outreach.responded}</div>
+            <div class="stat-label">Responded</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value">${summary.outreach.converted}</div>
+            <div class="stat-label">Converted</div>
+          </div>
+        `;
+
+        // Milestones
+        document.getElementById('milestones-list').innerHTML = summary.milestones.items.map(m => `
+          <div class="list-item">
+            <div class="status-dot ${m.status.replace('_', '-')}"></div>
+            <div class="list-item-content">
+              <div class="list-item-title">${m.title}</div>
+            </div>
+            <select class="form-select" style="width: auto" onchange="updateMilestone(${m.id}, this.value)">
+              <option value="pending" ${m.status === 'pending' ? 'selected' : ''}>Pending</option>
+              <option value="in_progress" ${m.status === 'in_progress' ? 'selected' : ''}>In Progress</option>
+              <option value="completed" ${m.status === 'completed' ? 'selected' : ''}>Completed</option>
+            </select>
+          </div>
+        `).join('');
+
+        // Outreach
+        document.getElementById('outreach-list').innerHTML = summary.outreach.items.length > 0
+          ? summary.outreach.items.map(c => `
+            <div class="list-item">
+              <div class="status-dot ${c.status.replace('_', '-')}"></div>
+              <div class="list-item-content" onclick="openStatusModal(${c.id}, '${c.status}', '${escapeHtml(c.notes || '')}')" style="cursor: pointer">
+                <div class="list-item-title">${c.name}</div>
+                <div class="list-item-meta">${c.channel} • ${c.status.replace('_', ' ')}</div>
+              </div>
+              <button class="btn btn-small btn-outline" onclick="deleteContact(${c.id})">×</button>
+            </div>
+          `).join('')
+          : '<p style="color: var(--text-dim); padding: 1rem;">No contacts yet. Add your first outreach contact above.</p>';
+
+        // Learnings
+        document.getElementById('learnings-list').innerHTML = summary.learnings.length > 0
+          ? summary.learnings.map(l => `
+            <div class="learning-card">
+              <div class="learning-category">${l.category}</div>
+              <div class="learning-content">${l.content}</div>
+            </div>
+          `).join('')
+          : '<p style="color: var(--text-dim);">No learnings yet.</p>';
+
+        // Metrics
+        document.getElementById('metrics-list').innerHTML = summary.metrics.length > 0
+          ? summary.metrics.map(m => `
+            <div class="list-item">
+              <div class="list-item-content">
+                <div class="list-item-title">${m.metric_name}</div>
+              </div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent)">${m.value}</div>
+            </div>
+          `).join('')
+          : '<p style="color: var(--text-dim);">No metrics recorded yet.</p>';
+
+      } catch (e) {
+        console.error('Error loading launch data:', e);
+      }
+    }
+
+    async function addMilestone() {
+      const input = document.getElementById('new-milestone');
+      const title = input.value.trim();
+      if (!title) return;
+
+      await fetch(API + '/api/launch/milestones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title })
+      });
+
+      input.value = '';
+      loadLaunchData();
+    }
+
+    async function updateMilestone(id, status) {
+      await fetch(API + `/api/launch/milestones/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+      });
+      loadLaunchData();
+    }
+
+    async function addContact() {
+      const name = document.getElementById('contact-name').value.trim();
+      const channel = document.getElementById('contact-channel').value;
+      if (!name) return;
+
+      await fetch(API + '/api/launch/outreach', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, channel })
+      });
+
+      document.getElementById('contact-name').value = '';
+      loadLaunchData();
+    }
+
+    async function deleteContact(id) {
+      if (!confirm('Delete this contact?')) return;
+      await fetch(API + `/api/launch/outreach/${id}`, { method: 'DELETE' });
+      loadLaunchData();
+    }
+
+    function openStatusModal(id, status, notes) {
+      currentContactId = id;
+      document.getElementById('status-select').value = status;
+      document.getElementById('status-notes').value = notes;
+      document.getElementById('status-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('status-modal').classList.add('hidden');
+      currentContactId = null;
+    }
+
+    async function saveStatus() {
+      const status = document.getElementById('status-select').value;
+      const notes = document.getElementById('status-notes').value;
+
+      await fetch(API + `/api/launch/outreach/${currentContactId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status, notes })
+      });
+
+      closeModal();
+      loadLaunchData();
+    }
+
+    async function addLearning() {
+      const category = document.getElementById('learning-category').value;
+      const content = document.getElementById('learning-content').value.trim();
+      if (!content) return;
+
+      await fetch(API + '/api/launch/learnings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ category, content })
+      });
+
+      document.getElementById('learning-content').value = '';
+      loadLaunchData();
+    }
+
+    async function recordMetric() {
+      const metric_name = document.getElementById('metric-name').value;
+      const value = parseInt(document.getElementById('metric-value').value);
+      if (isNaN(value)) return;
+
+      await fetch(API + '/api/launch/metrics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ metric_name, value })
+      });
+
+      document.getElementById('metric-value').value = '';
+      loadLaunchData();
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
